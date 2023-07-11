@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 leptos = { version = "0.4.2", features = ["csr", "nightly"] }
-stylers = "0.3.1"
+stylist = "0.12.1"

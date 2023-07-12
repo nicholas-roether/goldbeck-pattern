@@ -8,6 +8,10 @@ mod grid;
 
 #[component]
 fn App(cx: Scope) -> impl IntoView {
+	let container = css! {
+		max-width: 500px;
+	};
+
 	let (size, set_size) = create_signal(cx, 8);
 
 	view! { cx,
@@ -22,11 +26,12 @@ fn App(cx: Scope) -> impl IntoView {
 				}
 			}
 		/>
-		<Grid size />
+		<div class={container}>
+			<Grid size />
+		</div>
 	}
 }
 
 fn main() {
-	println!("Hello, world!");
 	mount_to_body(|cx| view! { cx, <App />})
 }

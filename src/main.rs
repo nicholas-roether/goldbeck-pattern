@@ -6,6 +6,8 @@ mod css;
 
 mod grid;
 
+mod tiling;
+
 #[component]
 fn App(cx: Scope) -> impl IntoView {
 	let container = css! {

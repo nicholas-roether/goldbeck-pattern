@@ -1,3 +1,7 @@
+#![feature(const_fn_floating_point_arithmetic)]
+
+use std::panic;
+
 use leptos::*;
 
 use crate::grid::Grid;
@@ -14,26 +18,28 @@ fn App(cx: Scope) -> impl IntoView {
 		max-width: 500px;
 	};
 
-	let (size, set_size) = create_signal(cx, 8);
+	let (scale, set_scale) = create_signal(cx, 1);
 
 	view! { cx,
 		<input
 			type="range"
-			min="4"
-			max="16"
-			prop:value={size}
+			min="1"
+			max="3"
+			prop:value={scale}
 			on:input=move |ev| {
 				if let Ok(value) = event_target_value(&ev).parse() {
-					set_size(value);
+					set_scale(value);
 				}
 			}
 		/>
 		<div class={container}>
-			<Grid size />
+			<Grid scale />
 		</div>
 	}
 }
 
 fn main() {
+	panic::set_hook(Box::new(console_error_panic_hook::hook));
+
 	mount_to_body(|cx| view! { cx, <App />})
 }

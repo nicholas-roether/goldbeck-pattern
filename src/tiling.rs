@@ -1,3 +1,5 @@
+use leptos::leptos_dom::console_log;
+
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 struct Vertex {
 	x: f32,
@@ -68,11 +70,11 @@ const fn generate_tiles<const NUM_TILES: usize>(reps_x: usize, reps_y: usize) ->
 
 		index += 2;
 		x += 1;
-		if x > width {
+		if x == width {
 			x = 0;
 			y += 1;
 		}
-		if y > height {
+		if y == height {
 			break;
 		}
 	}
@@ -98,16 +100,32 @@ pub struct Tiling {
 
 impl Tiling {
 	const SMALL_TILES: [Tile; num_tiles(1, 1)] = generate_tiles(1, 1);
-	pub const SMALL: Self = Self::new(&Self::SMALL_TILES, 5.0, 5.0);
+	pub const SMALL: Self = Self::new(
+		&Self::SMALL_TILES,
+		PATTERN_SIZE_SQUARES as f32,
+		PATTERN_SIZE_SQUARES as f32
+	);
 
 	const WIDE_TILES: [Tile; num_tiles(2, 1)] = generate_tiles(2, 1);
-	pub const WIDE: Self = Self::new(&Self::WIDE_TILES, 10.0, 5.0);
+	pub const WIDE: Self = Self::new(
+		&Self::WIDE_TILES,
+		2.0 * PATTERN_SIZE_SQUARES as f32,
+		PATTERN_SIZE_SQUARES as f32
+	);
 
 	const TALL_TILES: [Tile; num_tiles(1, 2)] = generate_tiles(1, 2);
-	pub const TALL: Self = Self::new(&Self::TALL_TILES, 5.0, 10.0);
+	pub const TALL: Self = Self::new(
+		&Self::TALL_TILES,
+		PATTERN_SIZE_SQUARES as f32,
+		2.0 * PATTERN_SIZE_SQUARES as f32
+	);
 
 	const LARGE_TILES: [Tile; num_tiles(2, 2)] = generate_tiles(2, 2);
-	pub const LARGE: Self = Self::new(&Self::LARGE_TILES, 10.0, 10.0);
+	pub const LARGE: Self = Self::new(
+		&Self::LARGE_TILES,
+		2.0 * PATTERN_SIZE_SQUARES as f32,
+		2.0 * PATTERN_SIZE_SQUARES as f32
+	);
 
 	const fn new(tiles: &'static [Tile], viewport_width: f32, viewport_height: f32) -> Self {
 		Tiling {
@@ -118,6 +136,7 @@ impl Tiling {
 	}
 
 	pub fn load(format: TilingFormat) -> Self {
+		console_log(&format!("{:#?}", Self::SMALL_TILES));
 		match format {
 			TilingFormat::Small => Self::SMALL,
 			TilingFormat::Wide => Self::WIDE,

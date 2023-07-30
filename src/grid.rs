@@ -4,7 +4,7 @@ use leptos::*;
 
 use crate::{
 	css,
-	tiling::{Shape, Tiling}
+	tiling::{Shape, Tiling, TilingFormat}
 };
 
 #[derive(Debug, Clone)]
@@ -32,7 +32,7 @@ struct GridState {
 }
 
 impl GridState {
-	fn new(cx: Scope, tiling: Rc<Tiling>) -> Self {
+	fn new(cx: Scope, tiling: Tiling) -> Self {
 		let tiles = tiling
 			.iter_tiles()
 			.map(|shape| TileState::new(cx, shape))
@@ -52,9 +52,6 @@ fn Tile(cx: Scope, state: TileState) -> impl IntoView {
 			points=state.shape.svg_path()
 			fill=move || if state.active.get() { "gray" } else { "white" }
 			shape-rendering="crispEdges"
-			on:click=move |_| state.active.set(!state.active.get())
-			on:mouseenter=move |_| state.outline.set(true)
-			on:mouseleave=move |_| state.outline.set(false)
 		/>
 	}
 }
@@ -84,14 +81,15 @@ where
 #[component]
 fn TileOverlay(cx: Scope, state: TileState) -> impl IntoView {
 	view! { cx,
-		<Show when=state.outline fallback=|_| () >
-			<polygon
-				points=state.shape.svg_path()
-				fill="none"
-				stroke="red"
-				strokeWidth="0.025"
-			/>
-		</Show>
+		<polygon
+			points=state.shape.svg_path()
+			fill="transparent"
+			stroke=move || if state.outline.get() { "red" } else { "none" }
+			stroke-width="0.025"
+			on:click=move |_| state.active.set(!state.active.get())
+			on:mouseenter=move |_| state.outline.set(true)
+			on:mouseleave=move |_| state.outline.set(false)
+		/>
 	}
 }
 
@@ -118,8 +116,8 @@ where
 }
 
 #[component]
-pub fn Grid(cx: Scope, scale: ReadSignal<usize>) -> impl IntoView {
-	let tiling = create_memo(cx, move |_| Rc::new(Tiling::new(scale() * 5, scale())));
+pub fn Grid(cx: Scope, format: ReadSignal<TilingFormat>) -> impl IntoView {
+	let tiling = move || Tiling::load(format());
 	let state = move || GridState::new(cx, tiling());
 
 	let container = css! {

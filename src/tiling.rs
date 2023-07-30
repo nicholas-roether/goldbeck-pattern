@@ -1,7 +1,7 @@
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
-pub struct Vertex {
-	pub x: f32,
-	pub y: f32
+struct Vertex {
+	x: f32,
+	y: f32
 }
 
 impl Vertex {
@@ -11,12 +11,12 @@ impl Vertex {
 }
 
 #[derive(Debug, Clone)]
-pub struct Shape(Vec<Vertex>);
+pub struct Shape(&'static [Vertex]);
 
 impl Shape {
 	pub fn svg_path(&self) -> String {
 		let mut path = String::new();
-		for vertex in &self.0 {
+		for vertex in self.0 {
 			if !path.is_empty() {
 				path.push(' ');
 			}
@@ -26,15 +26,21 @@ impl Shape {
 	}
 }
 
-const PATTERN_WIDTH: usize = 2;
-const PATTERN_HEIGHT: usize = 5;
-const TILE_SIZE: usize = 4;
-const NUM_TILES: usize = PATTERN_WIDTH * PATTERN_HEIGHT;
+const PATTERN_SIZE_SQUARES: usize = 5;
+const PATTERN_HEIGHT: usize = PATTERN_SIZE_SQUARES;
+const PATTERN_WIDTH: usize = 2 * PATTERN_HEIGHT;
 
-type Tile = [Vertex; TILE_SIZE];
+const fn num_tiles(reps_x: usize, reps_y: usize) -> usize {
+	reps_x * PATTERN_WIDTH * reps_y * PATTERN_HEIGHT
+}
 
-const fn generate_tiles() -> [Tile; NUM_TILES] {
-	let mut vertices: [Tile; NUM_TILES] = [[Vertex::new(0.0, 0.0); TILE_SIZE]; NUM_TILES];
+type Tile = [Vertex; 4];
+
+const fn generate_tiles<const NUM_TILES: usize>(reps_x: usize, reps_y: usize) -> [Tile; NUM_TILES] {
+	let width = reps_x * PATTERN_SIZE_SQUARES;
+	let height = reps_y * PATTERN_SIZE_SQUARES;
+
+	let mut vertices: [Tile; NUM_TILES] = [[Vertex::new(0.0, 0.0); 4]; NUM_TILES];
 
 	let mut index: usize = 0;
 	let mut x = 0;
@@ -43,8 +49,9 @@ const fn generate_tiles() -> [Tile; NUM_TILES] {
 	while index < NUM_TILES {
 		let x_f = x as f32;
 		let y_f = y as f32;
-		let offset_top = 1.0 - y_f / PATTERN_HEIGHT as f32;
-		let offset_bottom = 1.0 - (y_f + 1.0) / PATTERN_HEIGHT as f32;
+		let offset_i = (y % PATTERN_HEIGHT) as f32;
+		let offset_top = 1.0 - offset_i / PATTERN_HEIGHT as f32;
+		let offset_bottom = 1.0 - (offset_i + 1.0) / PATTERN_HEIGHT as f32;
 
 		vertices[index] = [
 			Vertex::new(x_f, y_f),
@@ -59,99 +66,71 @@ const fn generate_tiles() -> [Tile; NUM_TILES] {
 			Vertex::new(x_f + offset_bottom, y_f + 1.0)
 		];
 
-		index += PATTERN_WIDTH;
+		index += 2;
 		x += 1;
-		if x < PATTERN_WIDTH {
+		if x > width {
 			x = 0;
 			y += 1;
+		}
+		if y > height {
+			break;
 		}
 	}
 
 	vertices
 }
 
-const PATTERN_TILES: [Tile; NUM_TILES] = generate_tiles();
-
-const TILES_PER_SQUARE_X: usize = 2;
-const TILES_PER_SQUARE_Y: usize = 1;
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum TilingFormat {
+	Small,
+	Wide,
+	Tall,
+	Large
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Tiling {
-	width: usize,
-	height: usize
+	tiles: &'static [Tile],
+	viewport_width: f32,
+	viewport_height: f32
 }
 
 impl Tiling {
-	pub fn new(width: usize, height: usize) -> Self {
-		Self { width, height }
+	const SMALL_TILES: [Tile; num_tiles(1, 1)] = generate_tiles(1, 1);
+	pub const SMALL: Self = Self::new(&Self::SMALL_TILES, 5.0, 5.0);
+
+	const WIDE_TILES: [Tile; num_tiles(2, 1)] = generate_tiles(2, 1);
+	pub const WIDE: Self = Self::new(&Self::WIDE_TILES, 10.0, 5.0);
+
+	const TALL_TILES: [Tile; num_tiles(1, 2)] = generate_tiles(1, 2);
+	pub const TALL: Self = Self::new(&Self::TALL_TILES, 5.0, 10.0);
+
+	const LARGE_TILES: [Tile; num_tiles(2, 2)] = generate_tiles(2, 2);
+	pub const LARGE: Self = Self::new(&Self::LARGE_TILES, 10.0, 10.0);
+
+	const fn new(tiles: &'static [Tile], viewport_width: f32, viewport_height: f32) -> Self {
+		Tiling {
+			tiles,
+			viewport_width,
+			viewport_height
+		}
+	}
+
+	pub fn load(format: TilingFormat) -> Self {
+		match format {
+			TilingFormat::Small => Self::SMALL,
+			TilingFormat::Wide => Self::WIDE,
+			TilingFormat::Tall => Self::TALL,
+			TilingFormat::Large => Self::LARGE
+		}
 	}
 
 	pub fn view_box(&self) -> String {
-		format!(
-			"0 0 {} {}",
-			self.width * PATTERN_WIDTH / TILES_PER_SQUARE_X,
-			self.height * PATTERN_HEIGHT / TILES_PER_SQUARE_Y
-		)
+		format!("0 0 {} {}", self.viewport_width, self.viewport_height)
 	}
 
-	pub fn tile_width(&self) -> usize {
-		PATTERN_WIDTH * self.width
-	}
-
-	pub fn tile_height(&self) -> usize {
-		PATTERN_HEIGHT * self.height
-	}
-
-	pub fn tile(&self, x: usize, y: usize) -> Shape {
-		let pattern_x = x % PATTERN_WIDTH;
-		let offs_x = x / PATTERN_WIDTH;
-		let pattern_y = y % PATTERN_HEIGHT;
-		let offs_y = y / PATTERN_HEIGHT;
-
-		let pattern_index = pattern_y * PATTERN_WIDTH + pattern_x;
-		let base_vertices = PATTERN_TILES[pattern_index];
-		let trans_vertices = base_vertices
-			.iter()
-			.map(|v| Vertex::new(v.x + offs_x as f32, v.y + offs_y as f32))
-			.collect();
-
-		Shape(trans_vertices)
-	}
-
-	pub fn iter_tiles(&self) -> TilesIter {
-		TilesIter::new(self)
-	}
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct TilesIter<'a> {
-	tiling: &'a Tiling,
-	x: usize,
-	y: usize
-}
-
-impl<'a> TilesIter<'a> {
-	fn new(tiling: &'a Tiling) -> Self {
-		Self { tiling, x: 0, y: 0 }
-	}
-}
-
-impl<'a> Iterator for TilesIter<'a> {
-	type Item = Shape;
-
-	fn next(&mut self) -> Option<Self::Item> {
-		if self.y == self.tiling.tile_height() {
-			return None;
-		}
-
-		let shape = self.tiling.tile(self.x, self.y);
-
-		self.x += 1;
-		if self.x == self.tiling.tile_width() {
-			self.x = 0;
-			self.y += 1;
-		}
-
-		Some(shape)
+	pub fn iter_tiles(&self) -> impl Iterator<Item = Shape> {
+		self.tiles.iter().map(|points| Shape(points))
 	}
 }

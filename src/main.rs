@@ -4,7 +4,7 @@ use std::panic;
 
 use leptos::*;
 
-use crate::grid::Grid;
+use crate::{grid::Grid, tiling::TilingFormat};
 
 mod css;
 
@@ -18,22 +18,11 @@ fn App(cx: Scope) -> impl IntoView {
 		max-width: 500px;
 	};
 
-	let (scale, set_scale) = create_signal(cx, 1);
+	let (format, set_format) = create_signal(cx, TilingFormat::Small);
 
 	view! { cx,
-		<input
-			type="range"
-			min="1"
-			max="3"
-			prop:value={scale}
-			on:input=move |ev| {
-				if let Ok(value) = event_target_value(&ev).parse() {
-					set_scale(value);
-				}
-			}
-		/>
 		<div class={container}>
-			<Grid scale />
+			<Grid format />
 		</div>
 	}
 }

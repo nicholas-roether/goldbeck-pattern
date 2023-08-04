@@ -1,75 +1,52 @@
-use std::rc::Rc;
+use std::iter;
 
-use leptos::*;
+use leptos::{leptos_dom::console_log, *};
 
 use crate::{
 	css,
 	tiling::{Shape, Tiling, TilingFormat}
 };
 
-#[derive(Debug, Clone)]
-struct TileState {
-	shape: Rc<Shape>,
-	active: RwSignal<bool>,
-	outline: RwSignal<bool>
-}
+#[derive(Debug, PartialEq)]
+struct GridColors(Vec<RwSignal<bool>>);
 
-impl TileState {
-	fn new(cx: Scope, shape: Shape) -> Self {
-		Self {
-			shape: Rc::new(shape),
-			active: create_rw_signal(cx, false),
-			outline: create_rw_signal(cx, false)
-		}
+impl GridColors {
+	fn new(cx: Scope, size: usize) -> Self {
+		console_log(&format!("size: {size}"));
+		Self(
+			iter::repeat_with(|| create_rw_signal(cx, false))
+				.take(size)
+				.collect()
+		)
 	}
-}
 
-#[derive(Debug, Clone)]
-struct GridState {
-	gridlines: RwSignal<bool>,
-	view_box: String,
-	tiles: Rc<Vec<TileState>>
-}
-
-impl GridState {
-	fn new(cx: Scope, tiling: Tiling) -> Self {
-		let tiles = tiling
-			.iter_tiles()
-			.map(|shape| TileState::new(cx, shape))
-			.collect();
-		Self {
-			gridlines: create_rw_signal(cx, true),
-			view_box: tiling.view_box(),
-			tiles: Rc::new(tiles)
-		}
+	fn get_color(&self, i: usize) -> RwSignal<bool> {
+		console_log(&format!("{i} => {:#?}", self.0[i]));
+		self.0[i]
 	}
 }
 
 #[component]
-fn Tile(cx: Scope, state: TileState) -> impl IntoView {
+fn Tile(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView {
 	view! { cx,
 		<polygon
-			points=state.shape.svg_path()
-			fill=move || if state.active.get() { "gray" } else { "white" }
+			points=shape.svg_path()
+			fill=move || if color() { "gray" } else { "white" }
 			shape-rendering="crispEdges"
 		/>
 	}
 }
 
 #[component]
-fn Pattern<FnGS>(cx: Scope, state: FnGS) -> impl IntoView
-where
-	FnGS: Fn() -> GridState + Copy + 'static
-{
+fn Pattern(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl IntoView {
 	view! { cx,
-		<svg id="pattern-svg" viewBox=move || state().view_box>
-			{move || state()
-				.tiles
-				.iter()
-				.cloned()
-				.map(|state| {
+		<svg id="pattern-svg" viewBox=move || tiling().view_box()>
+			{move || tiling()
+				.iter_tiles()
+				.enumerate()
+				.map(|(i, shape)| {
 					view! { cx,
-						<Tile state />
+						<Tile shape color=colors.with(|c| c.get_color(i))/>
 					}
 				})
 				.collect_view(cx)
@@ -79,34 +56,31 @@ where
 }
 
 #[component]
-fn TileOverlay(cx: Scope, state: TileState) -> impl IntoView {
+fn TileOverlay(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView {
+	let (hovering, set_hovering) = create_signal(cx, false);
 	view! { cx,
 		<polygon
-			points=state.shape.svg_path()
+			points=shape.svg_path()
 			fill="transparent"
-			stroke=move || if state.outline.get() { "red" } else { "none" }
+			stroke=move || if hovering() { "red" } else { "none" }
 			stroke-width="0.025"
-			on:click=move |_| state.active.set(!state.active.get())
-			on:mouseenter=move |_| state.outline.set(true)
-			on:mouseleave=move |_| state.outline.set(false)
+			on:mouseenter=move |_| set_hovering(true)
+			on:mouseleave=move |_| set_hovering(false)
+			on:click=move |_| color.update(|c| *c = !*c)
 		/>
 	}
 }
 
 #[component]
-fn Overlay<FnGS>(cx: Scope, state: FnGS) -> impl IntoView
-where
-	FnGS: Fn() -> GridState + Copy + 'static
-{
+fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl IntoView {
 	view! { cx,
-		<svg viewBox=move || state().view_box>
-			{move || state()
-				.tiles
-				.iter()
-				.cloned()
-				.map(|state| {
+		<svg viewBox=move || tiling().view_box()>
+			{move || tiling()
+				.iter_tiles()
+				.enumerate()
+				.map(|(i, shape)| {
 					view! { cx,
-						<TileOverlay state />
+						<TileOverlay shape color=colors.with(|c| c.get_color(i)) />
 					}
 				})
 				.collect_view(cx)
@@ -117,8 +91,10 @@ where
 
 #[component]
 pub fn Grid(cx: Scope, format: ReadSignal<TilingFormat>) -> impl IntoView {
-	let tiling = move || Tiling::load(format());
-	let state = move || GridState::new(cx, tiling());
+	let tiling = create_memo(cx, move |_| Tiling::load(format()));
+	let colors = create_memo(cx, move |_| {
+		GridColors::new(cx, tiling.with(|t| t.num_tiles()))
+	});
 
 	let container = css! {
 		position: relative;
@@ -133,9 +109,9 @@ pub fn Grid(cx: Scope, format: ReadSignal<TilingFormat>) -> impl IntoView {
 
 	view! { cx,
 		<div class=container>
-			<Pattern state />
+			<Pattern tiling colors />
 			<div class=overlay>
-				<Overlay state />
+				<Overlay tiling colors />
 			</div>
 		</div>
 	}

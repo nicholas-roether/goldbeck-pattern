@@ -1,8 +1,8 @@
 #![feature(const_fn_floating_point_arithmetic)]
 
-use std::panic;
+use std::{mem, panic};
 
-use leptos::*;
+use leptos::{ev::Event, leptos_dom::console_error, *};
 
 use crate::{grid::Grid, tiling::TilingFormat};
 
@@ -16,11 +16,32 @@ mod tiling;
 fn App(cx: Scope) -> impl IntoView {
 	let container = css! {
 		max-width: 500px;
+		border: 2px solid black;
 	};
 
 	let (format, set_format) = create_signal(cx, TilingFormat::Small);
 
+	let on_format_change = move |evt: Event| {
+		let value_str = event_target_value(&evt);
+		let Ok(format): Result<u8, _> = value_str.parse() else {
+			console_error(&format!(
+				"Format dropdown had unexpected value ${value_str}"
+			));
+			return;
+		};
+		unsafe {
+			set_format(mem::transmute(format));
+		}
+	};
+
 	view! { cx,
+		<label for="format">Format auswählen</label>
+		<select id="format" on:change=on_format_change>
+			<option value=TilingFormat::Small as u8>Klein</option>
+			<option value=TilingFormat::Wide as u8>Breit</option>
+			<option value=TilingFormat::Tall as u8>Hoch</option>
+			<option value=TilingFormat::Large as u8>Groß</option>
+		</select>
 		<div class={container}>
 			<Grid format />
 		</div>

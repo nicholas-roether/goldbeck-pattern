@@ -1,6 +1,6 @@
 use std::iter;
 
-use leptos::{leptos_dom::console_log, *};
+use leptos::*;
 
 use crate::{
 	css,
@@ -12,7 +12,6 @@ struct GridColors(Vec<RwSignal<bool>>);
 
 impl GridColors {
 	fn new(cx: Scope, size: usize) -> Self {
-		console_log(&format!("size: {size}"));
 		Self(
 			iter::repeat_with(|| create_rw_signal(cx, false))
 				.take(size)
@@ -21,7 +20,6 @@ impl GridColors {
 	}
 
 	fn get_color(&self, i: usize) -> RwSignal<bool> {
-		console_log(&format!("{i} => {:#?}", self.0[i]));
 		self.0[i]
 	}
 }

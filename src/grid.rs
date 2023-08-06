@@ -134,7 +134,7 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 		tiling.with(|t| {
 			format!(
 				"{} {} {} {}",
-				t.viewport_height() * (1.0 - REPETITIONS_X) / 2.0,
+				t.viewport_width() * (1.0 - REPETITIONS_X) / 2.0,
 				t.viewport_height() * (1.0 - REPETITIONS_Y) / 2.0,
 				t.viewport_width() * REPETITIONS_X,
 				t.viewport_height() * REPETITIONS_Y

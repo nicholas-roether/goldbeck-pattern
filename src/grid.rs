@@ -33,7 +33,7 @@ fn Tile(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView {
 			fill=color
 			stroke=color
 			vector-effect="non-scaling-stroke"
-			stroke-width="0.7"
+			stroke-width="1"
 		/>
 	}
 }

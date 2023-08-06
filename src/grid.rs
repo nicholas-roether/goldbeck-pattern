@@ -141,9 +141,53 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 			)
 		})
 	};
+	let width = move || tiling.with(|t| t.viewport_width());
+	let height = move || tiling.with(|t| t.viewport_height());
 
 	view! { cx,
 		<svg viewBox=view_box>
+			<defs>
+				<linearGradient id="fadeoutLeft">
+					<stop offset="0%" stop-color="#ffffffff" />
+					<stop offset="100%" stop-color="#ffffff00" />
+				</linearGradient>
+				<linearGradient id="fadeoutRight">
+					<stop offset="0%" stop-color="#ffffff00" />
+					<stop offset="100%" stop-color="#ffffffff" />
+				</linearGradient>
+			</defs>
+			<rect
+				x=move || -width()
+				y="0"
+				width=width
+				height=height
+				fill="url(#fadeoutLeft)"
+			/>
+			<rect
+				x=width
+				y="0"
+				width=width
+				height=height
+				fill="url(#fadeoutRight)"
+			/>
+			<line
+				x1="0"
+				y1="0%"
+				x2="0"
+				y2="100%"
+				stroke="black"
+				stroke-width="2"
+				vector-effect="non-scaling-stroke"
+			/>
+			<line
+				x1=width
+				y1="0%"
+				x2=width
+				y2="100%"
+				stroke="black"
+				stroke-width="2"
+				vector-effect="non-scaling-stroke"
+			/>
 			{move || tiling()
 				.iter_tiles()
 				.enumerate()

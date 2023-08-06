@@ -15,7 +15,6 @@ mod tiling;
 #[component]
 fn App(cx: Scope) -> impl IntoView {
 	let container = css! {
-		max-width: 500px;
 		border: 2px solid black;
 	};
 

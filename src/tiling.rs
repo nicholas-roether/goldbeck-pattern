@@ -97,8 +97,6 @@ pub struct Tiling {
 }
 
 impl Tiling {
-	pub const FRINGE: f32 = 0.02;
-
 	const SMALL_TILES: [Tile; num_tiles(1, 1)] = generate_tiles(1, 1);
 	pub const SMALL: Self = Self::new(
 		&Self::SMALL_TILES,
@@ -144,14 +142,12 @@ impl Tiling {
 		}
 	}
 
-	pub fn view_box(&self) -> String {
-		format!(
-			"{} {} {} {}",
-			-Self::FRINGE,
-			-Self::FRINGE,
-			self.viewport_width + 2.0 * Self::FRINGE,
-			self.viewport_height + 2.0 * Self::FRINGE
-		)
+	pub fn viewport_width(&self) -> f32 {
+		self.viewport_width
+	}
+
+	pub fn viewport_height(&self) -> f32 {
+		self.viewport_height
 	}
 
 	pub fn iter_tiles(&self) -> impl Iterator<Item = Shape> {

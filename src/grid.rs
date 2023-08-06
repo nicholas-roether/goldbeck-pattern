@@ -35,20 +35,47 @@ fn Tile(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView {
 	}
 }
 
+const REPETITIONS_X: f32 = 3.0;
+const REPETITIONS_Y: f32 = 1.0;
+
 #[component]
 fn Pattern(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl IntoView {
+	let width = move || tiling.with(|t| (t.viewport_width() * REPETITIONS_X).to_string());
+	let height = move || tiling.with(|t| (t.viewport_height() * REPETITIONS_Y).to_string());
+	let view_box = move || format!("0 0 {} {}", width(), height());
+	let pattern_width = move || tiling.with(|t| t.viewport_width().to_string());
+	let pattern_height = move || tiling.with(|t| t.viewport_height().to_string());
+	let pattern_view_box = move || format!("0 0 {} {}", pattern_width(), pattern_height());
+
+	let pattern = css! {
+		height: 100%;
+	};
+
 	view! { cx,
-		<svg id="pattern-svg" viewBox=move || tiling().view_box()>
-			{move || tiling()
-				.iter_tiles()
-				.enumerate()
-				.map(|(i, shape)| {
-					view! { cx,
-						<Tile shape color=colors.with(|c| c.get_color(i))/>
+		<svg id="pattern-svg" class=pattern viewBox=view_box>
+			<defs>
+				<pattern
+					id="Tiling"
+					x="0"
+					y="0"
+					width=pattern_width
+					height=pattern_height
+					patternUnits="userSpaceOnUse"
+					view_box=pattern_view_box
+				>
+					{move || tiling()
+						.iter_tiles()
+						.enumerate()
+						.map(|(i, shape)| {
+							view! { cx,
+								<Tile shape color=colors.with(|c| c.get_color(i))/>
+							}
+						})
+						.collect_view(cx)
 					}
-				})
-				.collect_view(cx)
-			}
+				</pattern>
+			</defs>
+			<rect fill="url(#Tiling)" width=width height=height />
 		</svg>
 	}
 }
@@ -71,8 +98,20 @@ fn TileOverlay(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView 
 
 #[component]
 fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl IntoView {
+	let view_box = move || {
+		tiling.with(|t| {
+			format!(
+				"{} {} {} {}",
+				t.viewport_height() * (1.0 - REPETITIONS_X) / 2.0,
+				t.viewport_height() * (1.0 - REPETITIONS_Y) / 2.0,
+				t.viewport_width() * REPETITIONS_X,
+				t.viewport_height() * REPETITIONS_Y
+			)
+		})
+	};
+
 	view! { cx,
-		<svg viewBox=move || tiling().view_box()>
+		<svg class=overlay viewBox=view_box>
 			{move || tiling()
 				.iter_tiles()
 				.enumerate()
@@ -96,6 +135,8 @@ pub fn Grid(cx: Scope, format: ReadSignal<TilingFormat>) -> impl IntoView {
 
 	let container = css! {
 		position: relative;
+		overflow: hidden;
+		display: flex;
 	};
 	let overlay = css! {
 		position: absolute;

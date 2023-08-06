@@ -592,9 +592,12 @@ name = "goldbeck-pattern"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
+ "js-sys",
  "leptos",
  "stylist",
  "uuid",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

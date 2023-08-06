@@ -4,13 +4,15 @@ use std::{mem, panic};
 
 use leptos::{ev::Event, leptos_dom::console_error, *};
 
-use crate::{grid::Grid, tiling::TilingFormat};
+use crate::{export::export_svg, grid::Grid, tiling::TilingFormat};
 
 mod css;
 
 mod grid;
 
 mod tiling;
+
+mod export;
 
 #[component]
 fn App(cx: Scope) -> impl IntoView {
@@ -44,6 +46,7 @@ fn App(cx: Scope) -> impl IntoView {
 		<div class={container}>
 			<Grid format />
 		</div>
+		<button on:click=move |_| export_svg()>Exportieren</button>
 	}
 }
 

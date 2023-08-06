@@ -26,11 +26,14 @@ impl GridColors {
 
 #[component]
 fn Tile(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView {
+	let color = move || if color() { "gray" } else { "white" };
 	view! { cx,
 		<polygon
 			points=shape.svg_path()
-			fill=move || if color() { "gray" } else { "white" }
-			shape-rendering="crispEdges"
+			fill=color
+			stroke=color
+			vector-effect="non-scaling-stroke"
+			stroke-width="0.7"
 		/>
 	}
 }

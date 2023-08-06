@@ -1,6 +1,6 @@
 use std::iter;
 
-use leptos::*;
+use leptos::{ev::MouseEvent, *};
 
 use crate::{
 	css,
@@ -84,17 +84,43 @@ fn Pattern(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 fn TileOverlay(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView {
 	let (hovering, set_hovering) = create_signal(cx, false);
 
+	let brush = move |buttons: u16| match buttons {
+		0b01 => color.set(true),
+		0b10 => color.set(false),
+		_ => ()
+	};
+
+	let on_mouse_enter = move |evt: MouseEvent| {
+		set_hovering(true);
+		brush(evt.buttons());
+	};
+
+	let on_mouse_leave = move |_: MouseEvent| {
+		set_hovering(false);
+	};
+
+	let on_mouse_down = move |evt: MouseEvent| {
+		evt.prevent_default();
+		brush(evt.buttons());
+	};
+
+	let tile_overlay = css! {
+		cursor: crosshair;
+	};
+
 	view! { cx,
 		<polygon
+			class=tile_overlay
 			points=shape.svg_path()
 			vector-effect="non-scaling-stroke"
 			fill="transparent"
 			stroke=move || if hovering() { "red" } else { "none" }
 			stroke-width="3"
 			stroke-linejoin="round"
-			on:mouseenter=move |_| set_hovering(true)
-			on:mouseleave=move |_| set_hovering(false)
-			on:click=move |_| color.update(|c| *c = !*c)
+			on:mouseenter=on_mouse_enter
+			on:mouseleave=on_mouse_leave
+			on:mousedown=on_mouse_down
+			on:contextmenu=|evt| evt.prevent_default()
 		/>
 	}
 }

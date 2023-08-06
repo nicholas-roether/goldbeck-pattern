@@ -1,3 +1,14 @@
+# Cargo stuff
 /target
 /dist
+
+# Build system stuff
 /tmp
+
+# Yarn stuff
+.yarn/*
+!.yarn/cache
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions

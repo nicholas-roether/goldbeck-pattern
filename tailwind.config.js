@@ -1,18 +1,40 @@
-module.exports = {
-	content: {
-		files: ["*.html", "./src/**/*.rs"],
-	},
-	theme: {
-		colors: {
-			carbon: "#2b323a",
-			blue: "#3ebaec",
-			white: "#fff",
-			gold: "#c1a368",
-			aluminium: "#b8bbbe"
-		},
-		fontFamily: {
-			sans: ["Montserrat", "sans-serif"]
-		}
-	},
-	plugins: []
-}
+import { createThemes } from "tw-colors";
+
+const COLORS = {
+  carbon: "#2b323a",
+  blue: "#3ebaec",
+  white: "#fff",
+  gold: "#c1a368",
+  aluminium: "#b8bbbe",
+};
+
+export default {
+  content: {
+    files: ["*.html", "./src/**/*.rs"],
+  },
+  theme: {
+    fontFamily: {
+      sans: ["Montserrat", "sans-serif"],
+    },
+  },
+  plugins: [
+    createThemes({
+      light: {
+        background: COLORS.white,
+        backgroundText: COLORS.carbon,
+        primary: COLORS.carbon,
+        primaryText: COLORS.white,
+        secondary: COLORS.blue,
+        secondaryText: COLORS.carbon,
+      },
+      dark: {
+        background: COLORS.carbon,
+        backgroundText: COLORS.white,
+        primary: COLORS.white,
+        primaryText: COLORS.carbon,
+        secondary: COLORS.blue,
+        secondary: COLORS.white,
+      },
+    }),
+  ],
+};

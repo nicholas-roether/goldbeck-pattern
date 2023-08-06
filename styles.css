@@ -2,7 +2,7 @@
 @tailwind utilities;
 
 @layer base {
-	:root {
-		@apply bg-carbon text-white;
-	}
+  :root {
+    @apply bg-carbon text-white;
+  }
 }

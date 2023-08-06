@@ -1,0 +1,8 @@
+{
+  "name": "goldbeck-pattern",
+  "packageManager": "yarn@3.6.1",
+  "devDependencies": {
+    "tailwindcss": "^3.3.3",
+    "tw-colors": "^2.0.3"
+  }
+}

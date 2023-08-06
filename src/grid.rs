@@ -111,7 +111,7 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 	};
 
 	view! { cx,
-		<svg class=overlay viewBox=view_box>
+		<svg viewBox=view_box>
 			{move || tiling()
 				.iter_tiles()
 				.enumerate()

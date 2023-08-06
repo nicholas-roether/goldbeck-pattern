@@ -2,10 +2,7 @@ use std::iter;
 
 use leptos::{ev::MouseEvent, *};
 
-use crate::{
-	css,
-	tiling::{Shape, Tiling, TilingFormat}
-};
+use crate::tiling::{Shape, Tiling, TilingFormat};
 
 #[derive(Debug, PartialEq)]
 struct GridColors(Vec<RwSignal<bool>>);
@@ -50,12 +47,8 @@ fn Pattern(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 	let pattern_height = move || tiling.with(|t| t.viewport_height().to_string());
 	let pattern_view_box = move || format!("0 0 {} {}", pattern_width(), pattern_height());
 
-	let pattern = css! {
-		height: 100%;
-	};
-
 	view! { cx,
-		<svg id="pattern-svg" class=pattern viewBox=view_box>
+		<svg id="pattern-svg" class="block" viewBox=view_box>
 			<defs>
 				<pattern
 					id="Tiling"
@@ -107,13 +100,9 @@ fn TileOverlay(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView 
 		brush(evt.buttons());
 	};
 
-	let tile_overlay = css! {
-		cursor: crosshair;
-	};
-
 	view! { cx,
 		<polygon
-			class=tile_overlay
+			class="cursor-crosshair"
 			points=shape.svg_path()
 			vector-effect="non-scaling-stroke"
 			fill="transparent"
@@ -145,7 +134,7 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 	let height = move || tiling.with(|t| t.viewport_height());
 
 	view! { cx,
-		<svg viewBox=view_box>
+		<svg viewBox=view_box class="block">
 			<defs>
 				<linearGradient id="fadeoutLeft">
 					<stop offset="0%" stop-color="#ffffffff" />
@@ -209,23 +198,10 @@ pub fn Grid(cx: Scope, format: ReadSignal<TilingFormat>) -> impl IntoView {
 		GridColors::new(cx, tiling.with(|t| t.num_tiles()))
 	});
 
-	let container = css! {
-		position: relative;
-		overflow: hidden;
-		display: flex;
-	};
-	let overlay = css! {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	};
-
 	view! { cx,
-		<div class=container>
+		<div class="relative overflow-hidden">
 			<Pattern tiling colors />
-			<div class=overlay>
+			<div class="absolute inset-0 w-100 h-100">
 				<Overlay tiling colors />
 			</div>
 		</div>

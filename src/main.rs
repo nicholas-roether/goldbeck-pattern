@@ -6,8 +6,6 @@ use leptos::{ev::Event, leptos_dom::console_error, *};
 
 use crate::{export::export_svg, grid::Grid, tiling::TilingFormat};
 
-mod css;
-
 mod grid;
 
 mod tiling;
@@ -16,10 +14,6 @@ mod export;
 
 #[component]
 fn App(cx: Scope) -> impl IntoView {
-	let container = css! {
-		border: 2px solid black;
-	};
-
 	let (format, set_format) = create_signal(cx, TilingFormat::Small);
 
 	let on_format_change = move |evt: Event| {
@@ -43,7 +37,7 @@ fn App(cx: Scope) -> impl IntoView {
 			<option value=TilingFormat::Tall as u8>Hoch</option>
 			<option value=TilingFormat::Large as u8>Groß</option>
 		</select>
-		<div class={container}>
+		<div class="border-solid border-black border-2">
 			<Grid format />
 		</div>
 		<button on:click=move |_| export_svg()>Exportieren</button>

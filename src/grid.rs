@@ -83,12 +83,15 @@ fn Pattern(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 #[component]
 fn TileOverlay(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView {
 	let (hovering, set_hovering) = create_signal(cx, false);
+
 	view! { cx,
 		<polygon
 			points=shape.svg_path()
+			vector-effect="non-scaling-stroke"
 			fill="transparent"
 			stroke=move || if hovering() { "red" } else { "none" }
-			stroke-width="0.025"
+			stroke-width="3"
+			stroke-linejoin="round"
 			on:mouseenter=move |_| set_hovering(true)
 			on:mouseleave=move |_| set_hovering(false)
 			on:click=move |_| color.update(|c| *c = !*c)

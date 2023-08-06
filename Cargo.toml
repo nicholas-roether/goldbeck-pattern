@@ -11,4 +11,4 @@ js-sys = "0.3.64"
 leptos = { version = "0.4.2", features = ["csr", "nightly"] }
 uuid = { version = "1.4.1", features = ["v4", "fast-rng", "macro-diagnostics", "js"] }
 wasm-bindgen = "0.2.87"
-web-sys = { version = "0.3.64", features = ["Url", "Blob", "BlobPropertyBag", "HtmlElement", "Document", "Window", "Element", "SvgElement", "HtmlAnchorElement", "DomImplementation", "XmlSerializer", "Node"] }
+web-sys = { version = "0.3.64", features = ["Url", "Blob", "BlobPropertyBag", "HtmlElement", "Document", "Window", "Element", "SvgElement", "HtmlAnchorElement", "DomImplementation", "XmlSerializer", "Node", "HtmlHtmlElement"] }

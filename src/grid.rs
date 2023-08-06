@@ -2,7 +2,10 @@ use std::iter;
 
 use leptos::{ev::MouseEvent, *};
 
-use crate::tiling::{Shape, Tiling, TilingFormat};
+use crate::{
+	theme::ThemeCtx,
+	tiling::{Shape, Tiling, TilingFormat}
+};
 
 #[derive(Debug, PartialEq)]
 struct GridColors(Vec<RwSignal<bool>>);
@@ -23,14 +26,22 @@ impl GridColors {
 
 #[component]
 fn Tile(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView {
-	let color = move || if color() { "gray" } else { "white" };
+	let theme_ctx = use_context::<ThemeCtx>(cx).expect("Tile is missing theme context!");
+
+	let fill_color = move || {
+		let bg = theme_ctx.background.get();
+		let active = theme_ctx.primary.get();
+		if color() {
+			active
+		} else {
+			bg
+		}
+	};
 	view! { cx,
 		<polygon
 			points=shape.svg_path()
-			fill=color
-			stroke=color
-			vector-effect="non-scaling-stroke"
-			stroke-width="1"
+			fill=fill_color
+			shape-rendering="crispEdges"
 		/>
 	}
 }
@@ -133,16 +144,18 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 	let width = move || tiling.with(|t| t.viewport_width());
 	let height = move || tiling.with(|t| t.viewport_height());
 
+	let theme_ctx = use_context::<ThemeCtx>(cx).expect("Overlay is missing theme context!");
+
 	view! { cx,
 		<svg viewBox=view_box class="block">
 			<defs>
 				<linearGradient id="fadeoutLeft">
-					<stop offset="0%" stop-color="#ffffffff" />
-					<stop offset="100%" stop-color="#ffffff00" />
+					<stop offset="0%" stop-color=theme_ctx.background stop-opacity="1" />
+					<stop offset="100%" stop-color=theme_ctx.background stop-opacity="0" />
 				</linearGradient>
 				<linearGradient id="fadeoutRight">
-					<stop offset="0%" stop-color="#ffffff00" />
-					<stop offset="100%" stop-color="#ffffffff" />
+					<stop offset="0%" stop-color=theme_ctx.background stop-opacity="0" />
+					<stop offset="100%" stop-color=theme_ctx.background stop-opacity="1" />
 				</linearGradient>
 			</defs>
 			<rect

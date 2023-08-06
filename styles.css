@@ -3,6 +3,6 @@
 
 @layer base {
   :root {
-    @apply bg-carbon text-white;
+    @apply bg-background text-backgroundText;
   }
 }

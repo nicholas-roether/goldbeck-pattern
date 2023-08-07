@@ -177,14 +177,16 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 				y="0"
 				width=width
 				height=height
-				fill="url(#fadeoutLeft)"
+				fill=theme_ctx.background
+				fill-opacity="0.3"
 			/>
 			<rect
 				x=width
 				y="0"
 				width=width
 				height=height
-				fill="url(#fadeoutRight)"
+				fill=theme_ctx.background
+				fill-opacity="0.3"
 			/>
 			<g clip-path="url(#centerSquare)">
 				{move || tiling

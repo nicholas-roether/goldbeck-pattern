@@ -11,7 +11,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 		if is_active() {
 			"shadow-md scale-125"
 		} else {
-			""
+			"cursor-pointer hover:shadow-lg hover:border-highlight"
 		}
 	};
 
@@ -25,12 +25,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 			height="60px"
 			viewBox="0 0 100 100"
 			class=move || format!(
-				r#"
-                    cursor-pointer rounded-full border-2
-					border-misc hover:shadow-lg hover:border-highlight
-                    transition-transform
-                    {}
-                "#,
+				"rounded-full border-2 border-misc transition-transform {}",
 				dyn_styles()
 			)
 			on:click=move |_| theme_ctx.set(theme)

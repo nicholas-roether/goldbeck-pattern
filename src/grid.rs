@@ -129,7 +129,7 @@ fn TileOverlay(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView 
 			vector-effect="non-scaling-stroke"
 			fill="transparent"
 			stroke=stroke_color
-			stroke-width="2"
+			stroke-width="4"
 			stroke-linejoin="round"
 			on:mouseenter=on_mouse_enter
 			on:mouseleave=on_mouse_leave
@@ -168,6 +168,9 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 					<stop offset="0%" stop-color=theme_ctx.background stop-opacity="0" />
 					<stop offset="100%" stop-color=theme_ctx.background stop-opacity="1" />
 				</linearGradient>
+				<clipPath id="centerSquare">
+					<rect x="0" y="0" width=width height=height />
+				</clipPath>
 			</defs>
 			<rect
 				x=move || -width()
@@ -183,8 +186,27 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 				height=height
 				fill="url(#fadeoutRight)"
 			/>
-			{move || tiling()
-				.iter_tiles()
+			<g clip-path="url(#centerSquare)">
+				{move || tiling
+					.with(|t| t.iter_lines())
+					.map(|[p1, p2]| {
+						view! { cx,
+							<line
+								x1=p1.x
+								y1=p1.y
+								x2=p2.x
+								y2=p2.y
+								stroke=theme_ctx.misc
+								stroke-width="1"
+								vector-effect="non-scaling-stroke"
+							/>
+						}
+					})
+					.collect_view(cx)
+				}
+			</g>
+			{move || tiling
+				.with(|t| t.iter_tiles())
 				.enumerate()
 				.map(|(i, shape)| {
 					view! { cx,

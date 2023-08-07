@@ -31,6 +31,8 @@ pub struct ThemeCtx {
 	pub background: Memo<String>,
 	pub primary: Memo<String>,
 	pub secondary: Memo<String>,
+	pub misc: Memo<String>,
+	pub highlight: Memo<String>,
 	theme: RwSignal<Theme>
 }
 
@@ -44,12 +46,16 @@ impl ThemeCtx {
 		let background = Self::color(cx, computed_styles, "background");
 		let primary = Self::color(cx, computed_styles, "primary");
 		let secondary = Self::color(cx, computed_styles, "secondary");
+		let misc = Self::color(cx, computed_styles, "misc");
+		let highlight = Self::color(cx, computed_styles, "highlight");
 
 		Self {
 			background,
 			primary,
 			secondary,
-			theme
+			theme,
+			misc,
+			highlight
 		}
 	}
 

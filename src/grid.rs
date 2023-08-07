@@ -111,14 +111,25 @@ fn TileOverlay(cx: Scope, shape: Shape, color: RwSignal<bool>) -> impl IntoView 
 		brush(evt.buttons());
 	};
 
+	let theme_ctx = use_context::<ThemeCtx>(cx).expect("TileOverlay is missing theme context!");
+
+	let stroke_color = move || {
+		let highlight = theme_ctx.highlight.get();
+		if hovering() {
+			highlight
+		} else {
+			String::from("none")
+		}
+	};
+
 	view! { cx,
 		<polygon
 			class="cursor-crosshair"
 			points=shape.svg_path()
 			vector-effect="non-scaling-stroke"
 			fill="transparent"
-			stroke=move || if hovering() { "red" } else { "none" }
-			stroke-width="3"
+			stroke=stroke_color
+			stroke-width="2"
 			stroke-linejoin="round"
 			on:mouseenter=on_mouse_enter
 			on:mouseleave=on_mouse_leave
@@ -172,24 +183,6 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 				height=height
 				fill="url(#fadeoutRight)"
 			/>
-			<line
-				x1="0"
-				y1="0%"
-				x2="0"
-				y2="100%"
-				stroke="black"
-				stroke-width="2"
-				vector-effect="non-scaling-stroke"
-			/>
-			<line
-				x1=width
-				y1="0%"
-				x2=width
-				y2="100%"
-				stroke="black"
-				stroke-width="2"
-				vector-effect="non-scaling-stroke"
-			/>
 			{move || tiling()
 				.iter_tiles()
 				.enumerate()
@@ -205,6 +198,17 @@ fn Overlay(cx: Scope, tiling: Memo<Tiling>, colors: Memo<GridColors>) -> impl In
 }
 
 #[component]
+fn Frame(cx: Scope, tiling: Memo<Tiling>) -> impl IntoView {
+	let aspect_ratio = move || tiling.with(|t| t.viewport_width() / t.viewport_height());
+	view! { cx,
+		<div
+			class="mw-100 mh-100 outline outline-2 outline-misc shadow-2xl"
+			style:aspect-ratio=aspect_ratio
+		/>
+	}
+}
+
+#[component]
 pub fn Grid(cx: Scope, format: ReadSignal<TilingFormat>) -> impl IntoView {
 	let tiling = create_memo(cx, move |_| Tiling::load(format()));
 	let colors = create_memo(cx, move |_| {
@@ -212,8 +216,11 @@ pub fn Grid(cx: Scope, format: ReadSignal<TilingFormat>) -> impl IntoView {
 	});
 
 	view! { cx,
-		<div class="relative overflow-hidden">
+		<div class="relative">
 			<Pattern tiling colors />
+			<div class="absolute inset-0 w-100 h-100 flex justify-center">
+				<Frame tiling />
+			</div>
 			<div class="absolute inset-0 w-100 h-100">
 				<Overlay tiling colors />
 			</div>

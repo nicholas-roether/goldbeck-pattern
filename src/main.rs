@@ -54,9 +54,7 @@ fn App(cx: Scope) -> impl IntoView {
 			<option value=Theme::Light as u8>Hell</option>
 			<option value=Theme::Dark as u8>Dunkel</option>
 		</select>
-		<div class="border-solid border-black border-2">
-			<Grid format />
-		</div>
+		<Grid format />
 		<button on:click=move |_| export_svg()>Exportieren</button>
 	}
 }

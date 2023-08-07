@@ -1,32 +1,36 @@
 use leptos::{
 	component, create_effect, create_memo, create_rw_signal, provide_context, Children, IntoView,
-	Memo, RwSignal, Scope, SignalSet, SignalWith
+	Memo, RwSignal, Scope, SignalGet, SignalSet, SignalWith
 };
 use web_sys::{window, CssStyleDeclaration};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Theme {
-	Light,
-	Dark
+	Bubbles,
+	Icy,
+	Glisten,
+	Noble
 }
 
 impl Theme {
-	fn name(self) -> &'static str {
+	pub fn name(self) -> &'static str {
 		match self {
-			Self::Light => "light",
-			Self::Dark => "dark"
+			Self::Bubbles => "bubbles",
+			Self::Icy => "icy",
+			Self::Glisten => "glisten",
+			Self::Noble => "noble"
 		}
 	}
 }
 
 impl Default for Theme {
 	fn default() -> Self {
-		Self::Light
+		Self::Bubbles
 	}
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct ThemeCtx {
 	pub background: Memo<String>,
 	pub primary: Memo<String>,
@@ -37,6 +41,10 @@ pub struct ThemeCtx {
 }
 
 impl ThemeCtx {
+	pub fn get(&self) -> Theme {
+		self.theme.get()
+	}
+
 	pub fn set(&self, theme: Theme) {
 		self.theme.set(theme);
 	}

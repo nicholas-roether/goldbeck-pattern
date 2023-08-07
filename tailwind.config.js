@@ -19,7 +19,7 @@ export default {
   },
   plugins: [
     createThemes({
-      light: {
+      bubbles: {
         background: COLORS.white,
         backgroundText: COLORS.carbon,
         primary: COLORS.carbon,
@@ -28,7 +28,7 @@ export default {
 	    misc: COLORS.aluminium,
 	    highlight: COLORS.gold
       },
-      dark: {
+      icy: {
         background: COLORS.carbon,
         backgroundText: COLORS.white,
         primary: COLORS.white,
@@ -37,6 +37,24 @@ export default {
 	    misc: COLORS.aluminium,
 	    highlight: COLORS.gold
       },
+	  glisten: {
+	    background: COLORS.white,
+	    backgroundText: COLORS.carbon,
+	    primary: COLORS.carbon,
+	    primaryText: COLORS.white,
+	    secondary: COLORS.gold,
+	    misc: COLORS.aluminium,
+	    highlight: COLORS.blue
+	  },
+	  noble: {
+	    background: COLORS.carbon,
+		backgroundText: COLORS.white,
+		primary: COLORS.blue,
+		primaryText: COLORS.white,
+		secondary: COLORS.gold,
+		misc: COLORS.aluminium,
+		highlight: COLORS.white
+	  }
     }),
   ],
 };

@@ -1,4 +1,5 @@
 use leptos::*;
+use web_sys::KeyboardEvent;
 
 use crate::theme::{Theme, ThemeCtx};
 
@@ -12,6 +13,13 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 			"shadow-md scale-125"
 		} else {
 			"cursor-pointer hover:shadow-lg hover:border-highlight"
+		}
+	};
+
+	let on_keydown = move |evt: KeyboardEvent| {
+		if &evt.code() == "Enter" {
+			evt.prevent_default();
+			theme_ctx.set(theme);
 		}
 	};
 
@@ -29,7 +37,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 				dyn_styles()
 			)
 			on:click=move |_| theme_ctx.set(theme)
-			on:keydown=move |_| theme_ctx.set(theme)
+			on:keydown=on_keydown
 		>
 			<g class=format!("theme-{}", theme.name())>
 				<circle cx="50" cy="50" r="50" class="fill-background" />

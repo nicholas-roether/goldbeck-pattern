@@ -1,6 +1,6 @@
 use leptos::{
-	component, create_effect, create_memo, create_rw_signal, provide_context, store_value,
-	Children, IntoView, Memo, RwSignal, Scope, SignalGet, SignalSet, SignalWith, StoredValue
+	component, create_effect, create_rw_signal, provide_context, Children, IntoView, RwSignal,
+	Scope
 };
 use web_sys::{window, CssStyleDeclaration};
 
@@ -31,70 +31,50 @@ impl Default for Theme {
 }
 
 #[derive(Debug)]
-pub struct ThemeService {
-	pub background: Memo<String>,
-	pub primary: Memo<String>,
-	pub secondary: Memo<String>,
-	pub misc: Memo<String>,
-	pub highlight: Memo<String>,
-	theme: RwSignal<Theme>
+pub struct ThemeData {
+	pub background: String,
+	pub primary: String,
+	pub secondary: String,
+	pub misc: String,
+	pub highlight: String
 }
 
-impl ThemeService {
-	pub fn get(&self) -> Theme {
-		self.theme.get()
-	}
-
-	pub fn set(&self, theme: Theme) {
-		self.theme.set(theme);
-	}
-
-	fn new(cx: Scope, theme: RwSignal<Theme>) -> Self {
-		let computed_styles = Self::computed_styles(cx, theme);
-		let background = Self::color(cx, computed_styles, "background");
-		let primary = Self::color(cx, computed_styles, "primary");
-		let secondary = Self::color(cx, computed_styles, "secondary");
-		let misc = Self::color(cx, computed_styles, "misc");
-		let highlight = Self::color(cx, computed_styles, "highlight");
+impl ThemeData {
+	pub fn load() -> Self {
+		let computed_styles = Self::computed_styles();
+		let background = Self::color(&computed_styles, "background");
+		let primary = Self::color(&computed_styles, "primary");
+		let secondary = Self::color(&computed_styles, "secondary");
+		let misc = Self::color(&computed_styles, "misc");
+		let highlight = Self::color(&computed_styles, "highlight");
 
 		Self {
 			background,
 			primary,
 			secondary,
-			theme,
 			misc,
 			highlight
 		}
 	}
 
-	fn computed_styles(cx: Scope, theme: RwSignal<Theme>) -> Memo<CssStyleDeclaration> {
+	fn computed_styles() -> CssStyleDeclaration {
 		let window = window().unwrap();
 		let root = window.document().unwrap().document_element().unwrap();
-		create_memo(cx, move |_| {
-			theme.with(|_| ());
-			window.get_computed_style(&root).unwrap().unwrap()
-		})
+		window.get_computed_style(&root).unwrap().unwrap()
 	}
 
-	fn get_property(computed_styles: Memo<CssStyleDeclaration>, name: &str) -> String {
-		let styles = computed_styles();
-		styles.get_property_value(name).unwrap()
+	fn get_property(computed_styles: &CssStyleDeclaration, name: &str) -> String {
+		computed_styles.get_property_value(name).unwrap()
 	}
 
-	fn color(
-		cx: Scope,
-		computed_styles: Memo<CssStyleDeclaration>,
-		name: &'static str
-	) -> Memo<String> {
-		create_memo(cx, move |_| {
-			let var_name = format!("--twc-{name}");
-			let components = Self::get_property(computed_styles, &var_name);
-			format!("hsl({components})")
-		})
+	fn color(computed_styles: &CssStyleDeclaration, name: &'static str) -> String {
+		let var_name = format!("--twc-{name}");
+		let components = Self::get_property(computed_styles, &var_name);
+		format!("hsl({components})")
 	}
 }
 
-pub type ThemeCtx = StoredValue<ThemeService>;
+pub type ThemeCtx = RwSignal<Theme>;
 
 #[component]
 pub fn ThemeManager(cx: Scope, children: Children) -> impl IntoView {
@@ -104,8 +84,7 @@ pub fn ThemeManager(cx: Scope, children: Children) -> impl IntoView {
 		root.set_attribute("data-theme", theme().name()).unwrap();
 	});
 
-	let theme_ctx = store_value(cx, ThemeService::new(cx, theme));
-	provide_context::<ThemeCtx>(cx, theme_ctx);
+	provide_context::<ThemeCtx>(cx, theme);
 
 	children(cx)
 }

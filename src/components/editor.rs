@@ -146,7 +146,6 @@ pub fn Canvas(
 	};
 	view! { cx,
 		<div class="relative max-h-[70vh]" style:aspect-ratio=aspect_ratio>
-			{/* <div class="flex w-[250%] mx-[-75%] md:w-[150%] md:mx-[-25%] xl:w-full xl:mx-0"> */}
 			<div class="flex mx-[-100%] h-full">
 				<Pattern tiling colors reps_x=1 reps_y=1 background=true />
 				<Pattern tiling colors reps_x=1 reps_y=1 />

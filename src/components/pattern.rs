@@ -3,7 +3,7 @@ use std::iter;
 use leptos::*;
 
 use crate::{
-	theme::ThemeCtx,
+	theme::ThemeData,
 	tiling::{Shape, Tiling}
 };
 
@@ -20,7 +20,7 @@ impl Default for TileColor {
 	}
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct GridColors(Vec<RwSignal<TileColor>>);
 
 impl GridColors {
@@ -37,33 +37,29 @@ impl GridColors {
 	}
 }
 
-fn get_fill_color(cx: Scope, color: Signal<TileColor>) -> impl Fn() -> String {
-	let theme_ctx = use_context::<ThemeCtx>(cx).expect("Tile is missing theme context!");
-	move || {
-		let bg = theme_ctx.with_value(|tc| tc.background.get());
-		let primary = theme_ctx.with_value(|tc| tc.primary.get());
-		let secondary = theme_ctx.with_value(|tc| tc.secondary.get());
-		match color() {
-			TileColor::None => bg,
-			TileColor::Primary => primary,
-			TileColor::Secondary => secondary
-		}
-	}
-}
-
 #[component]
-fn ExportTile(cx: Scope, shape: Shape, color: Signal<TileColor>) -> impl IntoView {
+fn ExportTile<'a>(
+	cx: Scope,
+	shape: Shape,
+	color: TileColor,
+	theme_data: &'a ThemeData
+) -> impl IntoView {
+	let fill = match color {
+		TileColor::Primary => theme_data.primary.clone(),
+		TileColor::Secondary => theme_data.secondary.clone(),
+		TileColor::None => String::from("transparent")
+	};
 	view! { cx,
 		<polygon
 			points=shape.svg_path()
-			fill=move || get_fill_color(cx, color)
+			fill=fill
 			shape-rendering="crispEdges"
 		/>
 	}
 }
 
 #[component]
-fn Tile(cx: Scope, shape: Shape, color: Signal<TileColor>) -> impl IntoView {
+fn Tile(cx: Scope, shape: Shape, #[prop(into)] color: Signal<TileColor>) -> impl IntoView {
 	let class = move || match color() {
 		TileColor::Primary => "fill-primary",
 		TileColor::Secondary => "fill-secondary",
@@ -76,6 +72,35 @@ fn Tile(cx: Scope, shape: Shape, color: Signal<TileColor>) -> impl IntoView {
 			points=shape.svg_path()
 			shape-rendering="crispEdges"
 		/>
+	}
+}
+
+#[component]
+fn ExportGrid(cx: Scope, tiling: Tiling, colors: GridColors) -> impl IntoView {
+	let theme_data = ThemeData::load();
+	move || {
+		tiling
+			.iter_tiles()
+			.enumerate()
+			.map(|(i, shape)| {
+				let color = colors.get_color(i).get_untracked().into();
+				view! { cx, <ExportTile shape color theme_data=&theme_data /> }
+			})
+			.collect_view(cx)
+	}
+}
+
+#[component]
+fn Grid(cx: Scope, tiling: Signal<Tiling>, colors: Signal<GridColors>) -> impl IntoView {
+	move || {
+		tiling
+			.with(|t| t.iter_tiles())
+			.enumerate()
+			.map(|(i, shape)| {
+				let color = colors.with(|c| c.get_color(i));
+				view! { cx, <Tile shape color /> }
+			})
+			.collect_view(cx)
 	}
 }
 
@@ -101,6 +126,19 @@ pub fn Pattern(
 		class += " opacity-75 -z-1"
 	};
 
+	let grid = if export {
+		view! { cx,
+			<ExportGrid
+				tiling=tiling.get_untracked()
+				colors=colors.get_untracked()
+			/>
+		}
+	} else {
+		view! { cx,
+			<Grid tiling colors />
+		}
+	};
+
 	view! { cx,
 		<svg id="pattern-svg" class=class viewBox=view_box>
 			<defs>
@@ -113,19 +151,7 @@ pub fn Pattern(
 					patternUnits="userSpaceOnUse"
 					view_box=pattern_view_box
 				>
-					{move || tiling()
-						.iter_tiles()
-						.enumerate()
-						.map(|(i, shape)| {
-							let color = colors.with(|c| c.get_color(i)).into();
-							if export {
-								view! { cx, <ExportTile shape color /> }
-							} else {
-								view! { cx, <Tile shape color /> }
-							}
-						})
-						.collect_view(cx)
-					}
+					{grid}
 				</pattern>
 			</defs>
 			<rect fill="url(#Tiling)" width=width height=height />

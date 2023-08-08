@@ -37,24 +37,43 @@ impl GridColors {
 	}
 }
 
-#[component]
-fn Tile(cx: Scope, shape: Shape, color: Signal<TileColor>) -> impl IntoView {
+fn get_fill_color(cx: Scope, color: Signal<TileColor>) -> impl Fn() -> String {
 	let theme_ctx = use_context::<ThemeCtx>(cx).expect("Tile is missing theme context!");
-
-	let fill_color = move || {
-		let bg = theme_ctx.background.get();
-		let primary = theme_ctx.primary.get();
-		let secondary = theme_ctx.secondary.get();
+	move || {
+		let bg = theme_ctx.with_value(|tc| tc.background.get());
+		let primary = theme_ctx.with_value(|tc| tc.primary.get());
+		let secondary = theme_ctx.with_value(|tc| tc.secondary.get());
 		match color() {
 			TileColor::None => bg,
 			TileColor::Primary => primary,
 			TileColor::Secondary => secondary
 		}
-	};
+	}
+}
+
+#[component]
+fn ExportTile(cx: Scope, shape: Shape, color: Signal<TileColor>) -> impl IntoView {
 	view! { cx,
 		<polygon
 			points=shape.svg_path()
-			fill=fill_color
+			fill=move || get_fill_color(cx, color)
+			shape-rendering="crispEdges"
+		/>
+	}
+}
+
+#[component]
+fn Tile(cx: Scope, shape: Shape, color: Signal<TileColor>) -> impl IntoView {
+	let class = move || match color() {
+		TileColor::Primary => "fill-primary",
+		TileColor::Secondary => "fill-secondary",
+		TileColor::None => "fill-transparent"
+	};
+
+	view! { cx,
+		<polygon
+			class=class
+			points=shape.svg_path()
 			shape-rendering="crispEdges"
 		/>
 	}
@@ -63,11 +82,12 @@ fn Tile(cx: Scope, shape: Shape, color: Signal<TileColor>) -> impl IntoView {
 #[component]
 pub fn Pattern(
 	cx: Scope,
-	tiling: Signal<Tiling>,
-	colors: Signal<GridColors>,
+	#[prop(into)] tiling: Signal<Tiling>,
+	#[prop(into)] colors: Signal<GridColors>,
 	reps_x: usize,
 	reps_y: usize,
-	#[prop(optional)] background: Option<bool>
+	#[prop(default = false)] background: bool,
+	#[prop(default = false)] export: bool
 ) -> impl IntoView {
 	let width = move || tiling.with(|t| (t.viewport_width() * reps_x as f32).to_string());
 	let height = move || tiling.with(|t| (t.viewport_height() * reps_y as f32).to_string());
@@ -77,7 +97,7 @@ pub fn Pattern(
 	let pattern_view_box = move || format!("0 0 {} {}", pattern_width(), pattern_height());
 
 	let mut class = String::from("block");
-	if background.unwrap_or(false) {
+	if background {
 		class += " opacity-75 -z-1"
 	};
 
@@ -97,8 +117,11 @@ pub fn Pattern(
 						.iter_tiles()
 						.enumerate()
 						.map(|(i, shape)| {
-							view! { cx,
-								<Tile shape color=colors.with(|c| c.get_color(i)).into() />
+							let color = colors.with(|c| c.get_color(i)).into();
+							if export {
+								view! { cx, <ExportTile shape color /> }
+							} else {
+								view! { cx, <Tile shape color /> }
 							}
 						})
 						.collect_view(cx)

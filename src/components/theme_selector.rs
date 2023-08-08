@@ -7,7 +7,7 @@ use crate::theme::{Theme, ThemeCtx};
 fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 	let theme_ctx = use_context::<ThemeCtx>(cx).expect("ThemeButton is missing theme context!");
 
-	let is_active = move || theme_ctx.get() == theme;
+	let is_active = move || theme_ctx.with_value(|tc| tc.get() == theme);
 	let dyn_styles = move || {
 		if is_active() {
 			"shadow-md scale-125"
@@ -19,7 +19,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 	let on_keydown = move |evt: KeyboardEvent| {
 		if &evt.code() == "Enter" {
 			evt.prevent_default();
-			theme_ctx.set(theme);
+			theme_ctx.with_value(|tc| tc.set(theme));
 		}
 	};
 
@@ -36,7 +36,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 				"rounded-full border-2 border-misc transition-transform {}",
 				dyn_styles()
 			)
-			on:click=move |_| theme_ctx.set(theme)
+			on:click=move |_| theme_ctx.with_value(|tc| tc.set(theme))
 			on:keydown=on_keydown
 		>
 			<g class=format!("theme-{}", theme.name())>

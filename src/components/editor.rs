@@ -37,24 +37,20 @@ fn TileOverlay(
 		handle_mouse(evt.buttons());
 	};
 
-	let theme_ctx = use_context::<ThemeCtx>(cx).expect("TileOverlay is missing theme context!");
-
-	let stroke_color = move || {
-		let highlight = theme_ctx.highlight.get();
+	let class = move || {
 		if hovering() {
-			highlight
+			"cursor-crosshair stroke-highlight"
 		} else {
-			String::from("none")
+			"cursor-crosshair"
 		}
 	};
 
 	view! { cx,
 		<polygon
-			class="cursor-crosshair"
+			class=class
 			points=shape.svg_path()
 			vector-effect="non-scaling-stroke"
 			fill="transparent"
-			stroke=stroke_color
 			stroke-width="4"
 			stroke-linejoin="round"
 			on:mouseenter=on_mouse_enter
@@ -71,19 +67,17 @@ fn GridLines(
 	width: Signal<f32>,
 	height: Signal<f32>
 ) -> impl IntoView {
-	let theme_ctx = use_context::<ThemeCtx>(cx).expect("GridLines is missing theme context!");
-
 	let lines = move || {
 		tiling
 			.with(|t| t.iter_lines())
 			.map(|[p1, p2]| {
 				view! { cx,
 					<line
+						class="stroke-misc"
 						x1=p1.x
 						y1=p1.y
 						x2=p2.x
 						y2=p2.y
-						stroke=theme_ctx.misc
 						stroke-width="1"
 						vector-effect="non-scaling-stroke"
 					/>

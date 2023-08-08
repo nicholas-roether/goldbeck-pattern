@@ -1,6 +1,6 @@
 use leptos::{
-	component, create_effect, create_memo, create_rw_signal, provide_context, Children, IntoView,
-	Memo, RwSignal, Scope, SignalGet, SignalSet, SignalWith
+	component, create_effect, create_memo, create_rw_signal, provide_context, store_value,
+	Children, IntoView, Memo, RwSignal, Scope, SignalGet, SignalSet, SignalWith, StoredValue
 };
 use web_sys::{window, CssStyleDeclaration};
 
@@ -30,8 +30,8 @@ impl Default for Theme {
 	}
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct ThemeCtx {
+#[derive(Debug)]
+pub struct ThemeService {
 	pub background: Memo<String>,
 	pub primary: Memo<String>,
 	pub secondary: Memo<String>,
@@ -40,7 +40,7 @@ pub struct ThemeCtx {
 	theme: RwSignal<Theme>
 }
 
-impl ThemeCtx {
+impl ThemeService {
 	pub fn get(&self) -> Theme {
 		self.theme.get()
 	}
@@ -94,6 +94,8 @@ impl ThemeCtx {
 	}
 }
 
+pub type ThemeCtx = StoredValue<ThemeService>;
+
 #[component]
 pub fn ThemeManager(cx: Scope, children: Children) -> impl IntoView {
 	let theme = create_rw_signal(cx, Theme::default());
@@ -102,7 +104,7 @@ pub fn ThemeManager(cx: Scope, children: Children) -> impl IntoView {
 		root.set_attribute("data-theme", theme().name()).unwrap();
 	});
 
-	let theme_ctx = ThemeCtx::new(cx, theme);
+	let theme_ctx = store_value(cx, ThemeService::new(cx, theme));
 	provide_context::<ThemeCtx>(cx, theme_ctx);
 
 	children(cx)

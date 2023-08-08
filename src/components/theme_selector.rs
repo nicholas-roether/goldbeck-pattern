@@ -29,8 +29,8 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 			aria-checked=is_active
 			tabindex="0"
 			aria-label=theme.name()
-			width="60px"
-			height="60px"
+			width="50px"
+			height="50px"
 			viewBox="0 0 100 100"
 			class=move || format!(
 				"rounded-full border-2 border-misc transition-transform {}",
@@ -51,7 +51,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 #[component]
 pub fn ThemeSelector(cx: Scope) -> impl IntoView {
 	view! { cx,
-		<div class="py-8 max-w-sm mx-auto flex justify-between">
+		<div class="p-6 max-w-sm mx-auto flex justify-between">
 			<ThemeButton theme=Theme::Bubbles />
 			<ThemeButton theme=Theme::Icy />
 			<ThemeButton theme=Theme::Glisten />

@@ -125,7 +125,7 @@ fn Overlay(cx: Scope, tiling: Signal<Tiling>, colors: Signal<GridColors>) -> imp
 pub fn Editor(cx: Scope, tiling: Signal<Tiling>, colors: Signal<GridColors>) -> impl IntoView {
 	view! { cx,
 		<div class="relative">
-			<div class="flex">
+			<div class="flex w-[250%] mx-[-75%] md:w-[150%] md:mx-[-25%] xl:w-full xl:mx-0">
 				<Pattern tiling colors reps_x=1 reps_y=1 faded=true />
 				<Pattern tiling colors reps_x=1 reps_y=1 />
 				<Pattern tiling colors reps_x=1 reps_y=1 faded=true />

@@ -7,34 +7,48 @@ use crate::{
 	tiling::{Shape, Tiling}
 };
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TileColor {
+	None,
+	Primary,
+	Secondary
+}
+
+impl Default for TileColor {
+	fn default() -> Self {
+		Self::None
+	}
+}
+
 #[derive(Debug, PartialEq)]
-pub struct GridColors(Vec<RwSignal<bool>>);
+pub struct GridColors(Vec<RwSignal<TileColor>>);
 
 impl GridColors {
 	pub fn new(cx: Scope, size: usize) -> Self {
 		Self(
-			iter::repeat_with(|| create_rw_signal(cx, false))
+			iter::repeat_with(|| create_rw_signal(cx, TileColor::default()))
 				.take(size)
 				.collect()
 		)
 	}
 
-	pub fn get_color(&self, i: usize) -> RwSignal<bool> {
+	pub fn get_color(&self, i: usize) -> RwSignal<TileColor> {
 		self.0[i]
 	}
 }
 
 #[component]
-fn Tile(cx: Scope, shape: Shape, color: Signal<bool>) -> impl IntoView {
+fn Tile(cx: Scope, shape: Shape, color: Signal<TileColor>) -> impl IntoView {
 	let theme_ctx = use_context::<ThemeCtx>(cx).expect("Tile is missing theme context!");
 
 	let fill_color = move || {
 		let bg = theme_ctx.background.get();
-		let active = theme_ctx.primary.get();
-		if color() {
-			active
-		} else {
-			bg
+		let primary = theme_ctx.primary.get();
+		let secondary = theme_ctx.secondary.get();
+		match color() {
+			TileColor::None => bg,
+			TileColor::Primary => primary,
+			TileColor::Secondary => secondary
 		}
 	};
 	view! { cx,
@@ -53,7 +67,7 @@ pub fn Pattern(
 	colors: Signal<GridColors>,
 	reps_x: usize,
 	reps_y: usize,
-	#[prop(optional)] faded: Option<bool>
+	#[prop(optional)] background: Option<bool>
 ) -> impl IntoView {
 	let width = move || tiling.with(|t| (t.viewport_width() * reps_x as f32).to_string());
 	let height = move || tiling.with(|t| (t.viewport_height() * reps_y as f32).to_string());
@@ -63,8 +77,8 @@ pub fn Pattern(
 	let pattern_view_box = move || format!("0 0 {} {}", pattern_width(), pattern_height());
 
 	let mut class = String::from("block");
-	if faded.unwrap_or(false) {
-		class += " opacity-75"
+	if background.unwrap_or(false) {
+		class += " opacity-75 -z-1"
 	};
 
 	view! { cx,

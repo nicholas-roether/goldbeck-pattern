@@ -38,6 +38,7 @@ impl GridColors {
 }
 
 #[component]
+#[allow(clippy::needless_lifetimes)]
 fn ExportTile<'a>(
 	cx: Scope,
 	shape: Shape,
@@ -83,7 +84,7 @@ fn ExportGrid(cx: Scope, tiling: Tiling, colors: GridColors) -> impl IntoView {
 			.iter_tiles()
 			.enumerate()
 			.map(|(i, shape)| {
-				let color = colors.get_color(i).get_untracked().into();
+				let color = colors.get_color(i).get_untracked();
 				view! { cx, <ExportTile shape color theme_data=&theme_data /> }
 			})
 			.collect_view(cx)
@@ -121,7 +122,7 @@ pub fn Pattern(
 	let pattern_height = move || tiling.with(|t| t.viewport_height().to_string());
 	let pattern_view_box = move || format!("0 0 {} {}", pattern_width(), pattern_height());
 
-	let mut class = String::from("block");
+	let mut class = String::from("block transition-none");
 	if background {
 		class += " opacity-75 -z-1"
 	};

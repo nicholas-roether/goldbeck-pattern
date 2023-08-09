@@ -1,12 +1,8 @@
 @tailwind base;
 @tailwind utilities;
 
-* {
-	@apply transition-colors;
-}
-
 @layer base {
   :root {
-    @apply bg-background text-backgroundText;
+    @apply bg-background text-backgroundText transition-colors;
   }
 }

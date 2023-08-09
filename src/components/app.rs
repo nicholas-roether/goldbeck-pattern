@@ -14,7 +14,9 @@ pub fn App(cx: Scope) -> impl IntoView {
 	});
 
 	view! { cx,
-		<ThemeSelector />
-		<Editor tiling=tiling.into() colors=colors.into() />
+		<main class="w-screen h-screen flex flex-col items-center overflow-hidden">
+			<ThemeSelector />
+			<Editor tiling=tiling.into() colors=colors.into() />
+		</main>
 	}
 }

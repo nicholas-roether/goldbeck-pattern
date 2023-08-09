@@ -2,7 +2,6 @@ use leptos::{ev::MouseEvent, *};
 
 use crate::{
 	components::pattern::TileColor,
-	theme::ThemeCtx,
 	tiling::{Shape, Tiling}
 };
 
@@ -109,7 +108,7 @@ fn Overlay(
 	let height = Signal::derive(cx, move || tiling.with(|t| t.viewport_height()));
 
 	view! { cx,
-		<svg viewBox=view_box class="block outline outline-2 outline-misc shadow-2xl">
+		<svg viewBox=view_box width="100%" class="block outline outline-2 outline-misc shadow-2xl">
 			<GridLines tiling width height />
 			{move || tiling
 				.with(|t| t.iter_tiles())
@@ -126,13 +125,6 @@ fn Overlay(
 }
 
 #[component]
-fn BrushSelector(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
-	view! { cx,
-		<div class="bg-secondary w-[100px] h-2/3"></div>
-	}
-}
-
-#[component]
 pub fn Canvas(
 	cx: Scope,
 	tiling: Signal<Tiling>,
@@ -145,13 +137,13 @@ pub fn Canvas(
 			.to_string()
 	};
 	view! { cx,
-		<div class="relative max-h-[70vh]" style:aspect-ratio=aspect_ratio>
-			<div class="flex mx-[-100%] h-full">
+		<div class="relative h-full max-w-full m-auto" style:aspect-ratio=aspect_ratio>
+			<div class="absolute flex inset-0 mx-[-100%] h-full z-0">
 				<Pattern tiling colors reps_x=1 reps_y=1 background=true />
 				<Pattern tiling colors reps_x=1 reps_y=1 />
 				<Pattern tiling colors reps_x=1 reps_y=1 background=true />
 			</div>
-			<div class="absolute inset-0 w-full h-full flex justify-center">
+			<div class="relative z-1 w-full">
 				<Overlay tiling colors brush=brush.into() />
 			</div>
 		</div>
@@ -159,9 +151,21 @@ pub fn Canvas(
 }
 
 #[component]
+fn Controls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
+	view! { cx,
+		<div class="p-6">"Here be controls!"</div>
+	}
+}
+
+#[component]
 pub fn Editor(cx: Scope, tiling: Signal<Tiling>, colors: Signal<GridColors>) -> impl IntoView {
 	let brush = create_rw_signal(cx, TileColor::Primary);
 	view! { cx,
-		<Canvas tiling colors brush />
+		<div class="px-4 sm:px-16 flex flex-col items-center flex-1 w-full min-h-0">
+			<div class="shrink w-full min-h-0">
+				<Canvas tiling colors brush />
+			</div>
+			<Controls brush />
+		</div>
 	}
 }

@@ -10,9 +10,9 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 	let is_active = move || theme_ctx() == theme;
 	let dyn_styles = move || {
 		if is_active() {
-			"shadow-md scale-125"
+			"shadow-lg scale-125"
 		} else {
-			"cursor-pointer hover:shadow-lg hover:border-highlight"
+			"cursor-pointer hover:shadow-md hover:border-highlight"
 		}
 	};
 
@@ -33,14 +33,14 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 			height="50px"
 			viewBox="0 0 100 100"
 			class=move || format!(
-				"rounded-full border-2 border-misc transition-transform {}",
+				"rounded-full border-2 border-misc transition-all {}",
 				dyn_styles()
 			)
 			on:click=move |_| theme_ctx.set(theme)
 			on:keydown=on_keydown
 		>
 			<g class=format!("theme-{}", theme.name())>
-				<circle cx="50" cy="50" r="50" class="fill-background" />
+				<rect x="0" y="0" width="100" height="100" class="fill-background" />
 				<circle cx="33" cy="62" r="25" class="fill-primary" />
 				<circle cx="72" cy="40" r="15" class="fill-secondary" />
 			</g>
@@ -51,7 +51,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 #[component]
 pub fn ThemeSelector(cx: Scope) -> impl IntoView {
 	view! { cx,
-		<div class="p-6 max-w-sm mx-auto flex justify-between">
+		<div role="radiogroup" class="p-6 w-full max-w-sm mx-auto flex justify-between">
 			<ThemeButton theme=Theme::Bubbles />
 			<ThemeButton theme=Theme::Icy />
 			<ThemeButton theme=Theme::Glisten />

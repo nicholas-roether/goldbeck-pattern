@@ -151,9 +151,66 @@ pub fn Canvas(
 }
 
 #[component]
+fn BrushButton(cx: Scope, color: TileColor, brush: RwSignal<TileColor>) -> impl IntoView {
+	let bg_class = match color {
+		TileColor::Primary => "bg-primary text-primaryText before:bg-primary after:bg-primary",
+		TileColor::Secondary => {
+			"bg-secondary text-secondaryText before:bg-secondary after:bg-primary"
+		}
+		TileColor::None => "bg-background text-backgroundText before:bg-background after:bg-primary"
+	};
+	let active_class = move || {
+		if brush() == color {
+			"todo"
+		} else {
+			""
+		}
+	};
+
+	let class = move || {
+		format!(
+			r#"
+                transition-all h-20 flex-1 flex items-center justify-center
+                before:content-[""] before:block before:w-4 before:absolute before:-left-3
+                before:bor
+                {bg_class} {}
+            "#,
+			active_class()
+		)
+	};
+
+	view! { cx,
+		<button
+			class=class
+			role="radio"
+			aria-label=match color {
+				TileColor::Primary => "Pinsel 1",
+				TileColor::Secondary => "Pinsel 2",
+				TileColor::None => "Radiergummi"
+			}
+			on:click=move |_| brush.set(color)
+		>
+			{if color == TileColor::None {
+				view! { cx,
+					<box-icon name="eraser" size="md" color="currentColor" />
+				}
+			} else {
+				view! { cx,
+					<box-icon name="brush" size="md" color="currentColor" />
+				}
+			}}
+		</button>
+	}
+}
+
+#[component]
 fn Controls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
 	view! { cx,
-		<div class="p-6">"Here be controls!"</div>
+		<div role="radiogroup" aria-label="Werkzeug auswählen" class="p-6 flex w-full max-w-sm">
+			<BrushButton color=TileColor::Primary brush />
+			<BrushButton color=TileColor::Secondary brush />
+			<BrushButton color=TileColor::None brush />
+		</div>
 	}
 }
 

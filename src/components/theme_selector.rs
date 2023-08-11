@@ -51,7 +51,11 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 #[component]
 pub fn ThemeSelector(cx: Scope) -> impl IntoView {
 	view! { cx,
-		<div role="radiogroup" class="p-6 w-full max-w-sm mx-auto flex justify-between">
+		<div
+			role="radiogroup"
+			aria-label="Farbschema"
+			class="p-6 w-full max-w-sm mx-auto flex justify-between"
+		>
 			<ThemeButton theme=Theme::Bubbles />
 			<ThemeButton theme=Theme::Icy />
 			<ThemeButton theme=Theme::Glisten />

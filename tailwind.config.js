@@ -25,6 +25,7 @@ export default {
         primary: COLORS.carbon,
         primaryText: COLORS.white,
         secondary: COLORS.blue,
+		secondaryText: COLORS.carbon,
 	    misc: COLORS.aluminium,
 	    highlight: COLORS.gold
       },
@@ -34,6 +35,7 @@ export default {
         primary: COLORS.white,
         primaryText: COLORS.carbon,
         secondary: COLORS.blue,
+		secondaryText: COLORS.carbon,
 	    misc: COLORS.aluminium,
 	    highlight: COLORS.gold
       },
@@ -43,6 +45,7 @@ export default {
 	    primary: COLORS.carbon,
 	    primaryText: COLORS.white,
 	    secondary: COLORS.gold,
+		secondaryText: COLORS.carbon,
 	    misc: COLORS.aluminium,
 	    highlight: COLORS.blue
 	  },
@@ -50,8 +53,9 @@ export default {
 	    background: COLORS.carbon,
 		backgroundText: COLORS.white,
 		primary: COLORS.blue,
-		primaryText: COLORS.white,
+		primaryText: COLORS.carbon,
 		secondary: COLORS.gold,
+		secondaryText: COLORS.carbon,
 		misc: COLORS.aluminium,
 		highlight: COLORS.white
 	  }

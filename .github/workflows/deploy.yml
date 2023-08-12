@@ -28,7 +28,7 @@ jobs:
       - name: Install JavaScript Dependencies
         run: yarn
       - name: Build Project
-        run: trunk build
+        run: trunk build --public-url ${{ github.event.repository.name }}/
       - name: Upload Artifact
         id: deployment
         uses: actions/upload-pages-artifact@v2

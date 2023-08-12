@@ -140,10 +140,9 @@ const fn generate_lines<const NUM_LINES: usize>(reps_x: usize, reps_y: usize) ->
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum TilingFormat {
-	Small,
-	Wide,
-	Tall,
-	Large
+	F5X5,
+	F10X10,
+	F10X15
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -155,40 +154,31 @@ pub struct Tiling {
 }
 
 impl Tiling {
-	const SMALL_TILES: [Tile; num_tiles(1, 1)] = generate_tiles(1, 1);
-	const SMALL_LINES: [Line; num_lines(1, 1)] = generate_lines(1, 1);
-	pub const SMALL: Self = Self::new(
-		&Self::SMALL_TILES,
-		&Self::SMALL_LINES,
+	const F5X5_TILES: [Tile; num_tiles(1, 1)] = generate_tiles(1, 1);
+	const F5X5_LINES: [Line; num_lines(1, 1)] = generate_lines(1, 1);
+	pub const F5X5: Self = Self::new(
+		&Self::F5X5_TILES,
+		&Self::F5X5_LINES,
 		PATTERN_SIZE_SQUARES as f32,
 		PATTERN_SIZE_SQUARES as f32
 	);
 
-	const WIDE_TILES: [Tile; num_tiles(2, 1)] = generate_tiles(2, 1);
-	const WIDE_LINES: [Line; num_lines(2, 1)] = generate_lines(2, 1);
-	pub const WIDE: Self = Self::new(
-		&Self::WIDE_TILES,
-		&Self::WIDE_LINES,
+	const F10X10_TILES: [Tile; num_tiles(2, 2)] = generate_tiles(2, 2);
+	const F10X10_LINES: [Line; num_lines(2, 2)] = generate_lines(2, 2);
+	pub const F10X10: Self = Self::new(
+		&Self::F10X10_TILES,
+		&Self::F10X10_LINES,
 		2.0 * PATTERN_SIZE_SQUARES as f32,
-		PATTERN_SIZE_SQUARES as f32
-	);
-
-	const TALL_TILES: [Tile; num_tiles(1, 2)] = generate_tiles(1, 2);
-	const TALL_LINES: [Line; num_lines(1, 2)] = generate_lines(1, 2);
-	pub const TALL: Self = Self::new(
-		&Self::TALL_TILES,
-		&Self::TALL_LINES,
-		PATTERN_SIZE_SQUARES as f32,
 		2.0 * PATTERN_SIZE_SQUARES as f32
 	);
 
-	const LARGE_TILES: [Tile; num_tiles(2, 2)] = generate_tiles(2, 2);
-	const LARGE_LINES: [Line; num_lines(2, 2)] = generate_lines(2, 2);
-	pub const LARGE: Self = Self::new(
-		&Self::LARGE_TILES,
-		&Self::LARGE_LINES,
+	const F10X15_TILES: [Tile; num_tiles(2, 3)] = generate_tiles(2, 3);
+	const F10X15_LINES: [Line; num_lines(2, 3)] = generate_lines(2, 3);
+	pub const F10X15: Self = Self::new(
+		&Self::F10X15_TILES,
+		&Self::F10X15_LINES,
 		2.0 * PATTERN_SIZE_SQUARES as f32,
-		2.0 * PATTERN_SIZE_SQUARES as f32
+		3.0 * PATTERN_SIZE_SQUARES as f32
 	);
 
 	const fn new(
@@ -207,10 +197,9 @@ impl Tiling {
 
 	pub fn load(format: TilingFormat) -> Self {
 		match format {
-			TilingFormat::Small => Self::SMALL,
-			TilingFormat::Wide => Self::WIDE,
-			TilingFormat::Tall => Self::TALL,
-			TilingFormat::Large => Self::LARGE
+			TilingFormat::F5X5 => Self::F5X5,
+			TilingFormat::F10X10 => Self::F10X10,
+			TilingFormat::F10X15 => Self::F10X15
 		}
 	}
 
@@ -232,9 +221,5 @@ impl Tiling {
 
 	pub fn iter_lines(&self) -> impl Iterator<Item = &'static Line> {
 		self.lines.iter()
-	}
-
-	pub fn num_lines(&self) -> usize {
-		self.lines.len()
 	}
 }

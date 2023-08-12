@@ -1,6 +1,8 @@
-use leptos::*;
+use std::mem;
 
-use crate::components::pattern::TileColor;
+use leptos::{ev::Event, leptos_dom::console_log, *};
+
+use crate::{cls, components::pattern::TileColor, tiling::TilingFormat};
 
 #[component]
 fn BrushButton(
@@ -14,14 +16,15 @@ fn BrushButton(
 		<button
 			role="radio"
 			aria-label=name
-			class=move || String::new()
-				+ "inline-flex p-2 "
-				+ match color {
+			class=move || cls! {
+				"inline-flex h-full flex-1 justify-center items-center sm:aspect-square",
+				match color {
 					TileColor::Primary => "bg-primary text-primaryText ",
 					TileColor::Secondary => "bg-secondary text-secondaryText ",
 					TileColor::None => "bg-background text-backgroundText "
-				}
-				+ if brush() == color { "relative z-100 outline outline-3 outline-highlight " } else { " " }
+				},
+				if brush() == color { "relative z-100 outline outline-3 outline-highlight " } else { " " }
+			}
 			on:click=move |_| brush.set(color)
 		>
 			<box-icon name=icon size="md" color="currentColor" />
@@ -32,7 +35,7 @@ fn BrushButton(
 #[component]
 fn BrushControls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
 	view! { cx,
-		<div role="radiogroup" aria-label="Werkzeug auswählen" class="flex w-full max-w-sm border-2 border-misc">
+		<div role="radiogroup" aria-label="Werkzeug auswählen" class="flex border-2 border-misc h-12">
 			<BrushButton name="Pinsel 1" icon="brush" color=TileColor::Primary brush />
 			<BrushButton name="Pinsel 2" icon="brush" color=TileColor::Secondary brush />
 			<BrushButton name="Radiergummi" icon="eraser" color=TileColor::None brush />
@@ -41,11 +44,52 @@ fn BrushControls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
 }
 
 #[component]
-pub fn Controls(cx: Scope, brush: RwSignal<TileColor>, exporting: RwSignal<bool>) -> impl IntoView {
+fn ExportButton(cx: Scope, exporting: RwSignal<bool>) -> impl IntoView {
 	view! { cx,
-		<div class="p-6">
+		<button
+			class="inline-flex justify-center items-center h-12 sm:aspect-square font-semibold border-2 border-misc transition-all hover:shadow-lg"
+			on:click=move|_| exporting.set(true)
+		>
+			<box-icon name="download" size="md" color="currentColor" />
+		</button>
+	}
+}
+
+#[component]
+fn FormatSelector(cx: Scope, format: RwSignal<TilingFormat>) -> impl IntoView {
+	let on_format_change = move |ev: Event| {
+		let value = event_target_value(&ev);
+		let value_u8: u8 = value.parse().unwrap();
+		unsafe {
+			format.set(mem::transmute(value_u8));
+		}
+	};
+
+	view! { cx,
+		<select
+			class="h-12 p-2 bg-background text-backgroundText border-2 border-misc"
+			aria-label="Format auswählen"
+			on:change=on_format_change
+		>
+			<option value=TilingFormat::F5X5 as u8>"5×5"</option>
+			<option value=TilingFormat::F10X10 as u8>"10×10"</option>
+			<option value=TilingFormat::F10X15 as u8>"10×15"</option>
+		</select>
+	}
+}
+
+#[component]
+pub fn Controls(
+	cx: Scope,
+	brush: RwSignal<TileColor>,
+	exporting: RwSignal<bool>,
+	format: RwSignal<TilingFormat>
+) -> impl IntoView {
+	view! { cx,
+		<div class="p-6 w-full max-w-sm flex justify-between gap-4 flex-col sm:flex-row">
+			<FormatSelector format />
 			<BrushControls brush />
-			<button on:click=move|_| exporting.set(true)>"Export"</button>
+			<ExportButton exporting />
 		</div>
 	}
 }

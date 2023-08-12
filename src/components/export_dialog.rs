@@ -25,8 +25,8 @@ pub fn ExportDialog(
 
 	view! { cx,
 		<Show when=open fallback=|_| () >
-			<div class="z-40 w-screen h-screen absolute inset-0 bg-background/70 flex items-center justify-center">
-				<section class="w-full max-w-2xl p-4 m-4 bg-primary text-primaryText shadow-xl">
+			<div class="z-40 w-screen h-screen absolute inset-0 bg-background/70 flex items-center justify-center overflow-hidden">
+				<section class="flex-1 max-w-2xl p-4 m-4 bg-primary text-primaryText shadow-xl">
 					<div class="flex mb-4">
 						<h1 class="flex-1 font-bold text-xl">"Muster Exportieren"</h1>
 						<button class="inline-block" aria-label="Schließen" on:click=move |_| open.set(false)>
@@ -36,8 +36,8 @@ pub fn ExportDialog(
 					<div class="mb-4 p-4 flex justify-center h-80 bg-misc shadow-inner">
 						<Pattern id="export" export=true tiling colors reps_x=reps reps_y=1 />
 					</div>
-					<div class="flex items-center justify-between">
-						<span>
+					<div class="flex flex-col w-full sm:flex-row justify-between gap-4">
+						<span class="inline-flex flex-col">
 							<label for="exportRepsRange">Wiederholungen: {reps}</label><br />
 							<input type="range" id="exportRepsRange" min="1" max="6" value=reps on:input=on_reps_change />
 						</span>

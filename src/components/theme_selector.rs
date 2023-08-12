@@ -39,7 +39,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 			on:click=move |_| theme_ctx.set(theme)
 			on:keydown=on_keydown
 		>
-			<g class=format!("theme-{}", theme.name())>
+			<g data-theme=theme.name()>
 				<rect x="0" y="0" width="100" height="100" class="fill-background" />
 				<circle cx="33" cy="62" r="25" class="fill-primary" />
 				<circle cx="72" cy="40" r="15" class="fill-secondary" />

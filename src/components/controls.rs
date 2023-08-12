@@ -1,6 +1,6 @@
 use std::mem;
 
-use leptos::{ev::Event, leptos_dom::console_log, *};
+use leptos::{ev::Event, *};
 
 use crate::{cls, components::pattern::TileColor, tiling::TilingFormat};
 
@@ -17,7 +17,7 @@ fn BrushButton(
 			role="radio"
 			aria-label=name
 			class=move || cls! {
-				"inline-flex h-full flex-1 justify-center items-center sm:aspect-square",
+				"inline-flex h-full flex-1 justify-center items-center transition-colors sm:aspect-square",
 				match color {
 					TileColor::Primary => "bg-primary text-primaryText ",
 					TileColor::Secondary => "bg-secondary text-secondaryText ",
@@ -67,7 +67,7 @@ fn FormatSelector(cx: Scope, format: RwSignal<TilingFormat>) -> impl IntoView {
 
 	view! { cx,
 		<select
-			class="h-12 p-2 bg-background text-backgroundText border-2 border-misc"
+			class="h-12 p-2 bg-transparent border-2 border-misc"
 			aria-label="Format auswählen"
 			on:change=on_format_change
 		>

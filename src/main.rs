@@ -14,6 +14,8 @@ mod export;
 
 mod theme;
 
+mod utils;
+
 fn main() {
 	panic::set_hook(Box::new(console_error_panic_hook::hook));
 

@@ -1,20 +1,16 @@
 use leptos::*;
 use web_sys::KeyboardEvent;
 
-use crate::theme::{Theme, ThemeCtx};
+use crate::{
+	cls,
+	theme::{Theme, ThemeCtx}
+};
 
 #[component]
 fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 	let theme_ctx = use_context::<ThemeCtx>(cx).expect("ThemeButton is missing theme context!");
 
 	let is_active = move || theme_ctx() == theme;
-	let dyn_styles = move || {
-		if is_active() {
-			"shadow-lg scale-125 border-2 border-highlight"
-		} else {
-			"cursor-pointer border-2 border-misc hover:shadow-md"
-		}
-	};
 
 	let on_keydown = move |evt: KeyboardEvent| {
 		if &evt.code() == "Enter" {
@@ -32,10 +28,14 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 			width="50px"
 			height="50px"
 			viewBox="0 0 100 100"
-			class=move || format!(
-				"rounded-full transition-all {}",
-				dyn_styles()
-			)
+			class=move || cls! {
+				"rounded-full transition-all",
+				if is_active() {
+					"shadow-lg scale-125 border-2 border-highlight"
+				} else {
+					"cursor-pointer border-2 border-misc hover:shadow-md"
+				}
+			}
 			on:click=move |_| theme_ctx.set(theme)
 			on:keydown=on_keydown
 		>

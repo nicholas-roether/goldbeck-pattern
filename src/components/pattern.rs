@@ -3,6 +3,7 @@ use std::iter;
 use leptos::*;
 
 use crate::{
+	cls,
 	theme::ThemeData,
 	tiling::{Shape, Tiling}
 };
@@ -61,15 +62,15 @@ fn ExportTile<'a>(
 
 #[component]
 fn Tile(cx: Scope, shape: Shape, #[prop(into)] color: Signal<TileColor>) -> impl IntoView {
-	let class = move || match color() {
-		TileColor::Primary => "fill-primary",
-		TileColor::Secondary => "fill-secondary",
-		TileColor::None => "fill-transparent"
-	};
-
 	view! { cx,
 		<polygon
-			class=class
+			class=move || cls! {
+				match color() {
+					TileColor::Primary => "fill-primary",
+					TileColor::Secondary => "fill-secondary",
+					TileColor::None => "fill-transparent"
+				}
+			}
 			points=shape.svg_path()
 			shape-rendering="crispEdges"
 		/>

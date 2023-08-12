@@ -41,10 +41,11 @@ fn BrushControls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
 }
 
 #[component]
-pub fn Controls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
+pub fn Controls(cx: Scope, brush: RwSignal<TileColor>, exporting: RwSignal<bool>) -> impl IntoView {
 	view! { cx,
 		<div class="p-6">
 			<BrushControls brush />
+			<button on:click=move|_| exporting.set(true)>"Export"</button>
 		</div>
 	}
 }

@@ -136,9 +136,9 @@ pub fn Canvas(
 	view! { cx,
 		<div class="relative h-full max-w-full m-auto" style:aspect-ratio=aspect_ratio>
 			<div class="absolute flex inset-0 mx-[-100%] h-full z-0">
-				<Pattern tiling colors reps_x=1 reps_y=1 background=true />
-				<Pattern tiling colors reps_x=1 reps_y=1 />
-				<Pattern tiling colors reps_x=1 reps_y=1 background=true />
+				<Pattern id="canvas-bg-left" tiling colors reps_x=1 reps_y=1 background=true />
+				<Pattern id="canvas" tiling colors reps_x=1 reps_y=1 />
+				<Pattern id="canvas-bg-right" tiling colors reps_x=1 reps_y=1 background=true />
 			</div>
 			<div class="relative z-1 w-full">
 				<Overlay tiling colors brush=brush.into() />

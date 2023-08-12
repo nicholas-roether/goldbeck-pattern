@@ -4,6 +4,7 @@ use crate::{
 	components::{
 		canvas::Canvas,
 		controls::Controls,
+		export_dialog::ExportDialog,
 		pattern::{GridColors, TileColor},
 		theme_selector::ThemeSelector
 	},
@@ -18,6 +19,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 		GridColors::new(cx, tiling.with(|t| t.num_tiles()))
 	});
 	let brush = create_rw_signal(cx, TileColor::Primary);
+	let exporting = create_rw_signal(cx, false);
 
 	view! { cx,
 		<main class="w-screen h-screen flex flex-col items-center overflow-hidden">
@@ -25,7 +27,8 @@ pub fn App(cx: Scope) -> impl IntoView {
 			<div class="w-full min-h-0 px-4 sm:px-16">
 				<Canvas tiling colors brush />
 			</div>
-			<Controls brush />
+			<Controls brush exporting />
+			<ExportDialog open=exporting tiling colors />
 		</main>
 	}
 }

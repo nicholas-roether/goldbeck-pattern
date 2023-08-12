@@ -49,7 +49,7 @@ fn ExportTile<'a>(
 	let fill = match color {
 		TileColor::Primary => theme_data.primary.clone(),
 		TileColor::Secondary => theme_data.secondary.clone(),
-		TileColor::None => String::from("transparent")
+		TileColor::None => theme_data.background.clone()
 	};
 	view! { cx,
 		<polygon
@@ -109,15 +109,16 @@ fn Grid(cx: Scope, tiling: Signal<Tiling>, colors: Signal<GridColors>) -> impl I
 #[component]
 pub fn Pattern(
 	cx: Scope,
+	id: &'static str,
 	#[prop(into)] tiling: Signal<Tiling>,
 	#[prop(into)] colors: Signal<GridColors>,
-	reps_x: usize,
-	reps_y: usize,
+	#[prop(into)] reps_x: MaybeSignal<usize>,
+	#[prop(into)] reps_y: MaybeSignal<usize>,
 	#[prop(default = false)] background: bool,
 	#[prop(default = false)] export: bool
 ) -> impl IntoView {
-	let width = move || tiling.with(|t| (t.viewport_width() * reps_x as f32).to_string());
-	let height = move || tiling.with(|t| (t.viewport_height() * reps_y as f32).to_string());
+	let width = move || tiling.with(|t| (t.viewport_width() * reps_x() as f32).to_string());
+	let height = move || tiling.with(|t| (t.viewport_height() * reps_y() as f32).to_string());
 	let view_box = move || format!("0 0 {} {}", width(), height());
 	let pattern_width = move || tiling.with(|t| t.viewport_width().to_string());
 	let pattern_height = move || tiling.with(|t| t.viewport_height().to_string());
@@ -141,11 +142,13 @@ pub fn Pattern(
 		}
 	};
 
+	let tilingId = format!("Pattern-{id}__Tiling");
+
 	view! { cx,
-		<svg id="pattern-svg" class=class viewBox=view_box>
+		<svg class=class viewBox=view_box id=id>
 			<defs>
 				<pattern
-					id="Tiling"
+					id=tilingId.clone()
 					x="0"
 					y="0"
 					width=pattern_width
@@ -156,7 +159,7 @@ pub fn Pattern(
 					{grid}
 				</pattern>
 			</defs>
-			<rect fill="url(#Tiling)" width=width height=height />
+			<rect fill=format!("url(#{tilingId})") width=width height=height />
 		</svg>
 	}
 }

@@ -1,7 +1,7 @@
 use std::iter;
 
 use js_sys::{Array, JsString};
-use leptos::leptos_dom::console_error;
+use leptos::{document, leptos_dom::console_error};
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{window, Blob, BlobPropertyBag, HtmlAnchorElement, SvgElement, Url, XmlSerializer};
 
@@ -40,12 +40,12 @@ fn render_svg(elem: SvgElement) -> Result<String, JsValue> {
 	Ok(xml)
 }
 
-fn get_svg_elem() -> Option<SvgElement> {
+fn get_svg_elem(selector: &str) -> Option<SvgElement> {
 	let Some(elem) = window()
 		.unwrap()
 		.document()
 		.unwrap()
-		.query_selector("svg#pattern-svg")
+		.query_selector(selector)
 		.unwrap()
 	else {
 		return None;
@@ -53,25 +53,10 @@ fn get_svg_elem() -> Option<SvgElement> {
 	Some(elem.dyn_into().unwrap())
 }
 
-fn download_svg(url: &str) -> Result<(), JsValue> {
-	let document = window().unwrap().document().unwrap();
-	let a = document
-		.create_element("a")
-		.unwrap()
-		.dyn_into::<HtmlAnchorElement>()
-		.unwrap();
-	a.set_attribute("href", url)?;
-	a.set_attribute("download", "pattern.svg")?;
-	document.body().unwrap().append_child(&a)?;
-	a.click();
-	// a.remove();
-	Ok(())
-}
-
-pub fn export_svg() {
-	let Some(svg_elem) = get_svg_elem() else {
-		console_error("Cannot export pattern SVG; #pattern-svg not found!");
-		return;
+fn get_download_url(selector: &str) -> Option<String> {
+	let Some(svg_elem) = get_svg_elem(selector) else {
+		console_error("Cannot export SVG; element not found!");
+		return None;
 	};
 	let content = match render_svg(svg_elem) {
 		Ok(content) => content,
@@ -80,17 +65,35 @@ pub fn export_svg() {
 				"Failed to render svg: {}",
 				err.dyn_into::<JsString>().unwrap()
 			));
-			return;
+			return None;
 		}
 	};
-	let file = create_svg_file(content).expect("Failed to create SVG file blob");
-	match download_svg(&file) {
-		Ok(_) => (),
-		Err(err) => {
-			console_error(&format!(
-				"Failed to save svg: {}",
-				err.dyn_into::<JsString>().unwrap()
-			));
-		}
-	}
+	let url = create_svg_file(content).expect("Failed to create SVG file blob");
+	Some(url)
+}
+
+fn download_file(url: &str, filename: &str) {
+	let document = document();
+	let a = document
+		.create_element("a")
+		.expect("Failed to create anchor element!")
+		.dyn_into::<HtmlAnchorElement>()
+		.unwrap();
+	a.set_attribute("href", url).unwrap();
+	a.set_attribute("download", filename).unwrap();
+	a.set_attribute("style", "display: none").unwrap();
+	document
+		.body()
+		.expect("Document body is not present!")
+		.append_child(&a);
+	a.click();
+	a.remove();
+}
+
+pub fn export_svg(selector: &str, filename: &str) {
+	let Some(download_url) = get_download_url(selector) else {
+		console_error("SVG File creation failed");
+		return;
+	};
+	download_file(&download_url, filename);
 }

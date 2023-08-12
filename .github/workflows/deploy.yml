@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Install Rust
         run: curl https://sh.rustup.rs -sSf | sh -s -- -y && source "$HOME/.cargo/env"
+      - name: Install Rust WASM Toolchain
+        run: rustup target add wasm32-unknown-unknown
       - name: Install Trunk
         run: cargo install trunk
       - name: Checkout

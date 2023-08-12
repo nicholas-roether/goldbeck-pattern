@@ -85,7 +85,8 @@ fn download_file(url: &str, filename: &str) {
 	document
 		.body()
 		.expect("Document body is not present!")
-		.append_child(&a);
+		.append_child(&a)
+		.expect("Failed to append temporary anchor to document");
 	a.click();
 	a.remove();
 }

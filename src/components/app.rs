@@ -1,7 +1,12 @@
 use leptos::*;
 
 use crate::{
-	components::{editor::Editor, pattern::GridColors, theme_selector::ThemeSelector},
+	components::{
+		canvas::Canvas,
+		controls::Controls,
+		pattern::{GridColors, TileColor},
+		theme_selector::ThemeSelector
+	},
 	tiling::{Tiling, TilingFormat}
 };
 
@@ -12,11 +17,15 @@ pub fn App(cx: Scope) -> impl IntoView {
 	let colors = create_memo(cx, move |_| {
 		GridColors::new(cx, tiling.with(|t| t.num_tiles()))
 	});
+	let brush = create_rw_signal(cx, TileColor::Primary);
 
 	view! { cx,
 		<main class="w-screen h-screen flex flex-col items-center overflow-hidden">
 			<ThemeSelector />
-			<Editor tiling=tiling.into() colors=colors.into() />
+			<div class="w-full min-h-0 px-4 sm:px-16">
+				<Canvas tiling colors brush />
+			</div>
+			<Controls brush />
 		</main>
 	}
 }

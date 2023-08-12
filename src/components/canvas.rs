@@ -2,11 +2,9 @@ use leptos::{ev::MouseEvent, *};
 
 use crate::{
 	cls,
-	components::pattern::TileColor,
+	components::pattern::{GridColors, Pattern, TileColor},
 	tiling::{Shape, Tiling}
 };
-
-use super::pattern::{GridColors, Pattern};
 
 #[component]
 fn TileOverlay(
@@ -126,8 +124,8 @@ fn Overlay(
 #[component]
 pub fn Canvas(
 	cx: Scope,
-	tiling: Signal<Tiling>,
-	colors: Signal<GridColors>,
+	#[prop(into)] tiling: Signal<Tiling>,
+	#[prop(into)] colors: Signal<GridColors>,
 	brush: RwSignal<TileColor>
 ) -> impl IntoView {
 	let aspect_ratio = move || {
@@ -145,66 +143,6 @@ pub fn Canvas(
 			<div class="relative z-1 w-full">
 				<Overlay tiling colors brush=brush.into() />
 			</div>
-		</div>
-	}
-}
-
-#[component]
-fn BrushButton(
-	cx: Scope,
-	name: &'static str,
-	icon: &'static str,
-	color: TileColor,
-	brush: RwSignal<TileColor>
-) -> impl IntoView {
-	view! { cx,
-		<button
-			role="radio"
-			aria-label=name
-			class=move || String::new()
-				+ "inline-flex p-2 "
-				+ match color {
-					TileColor::Primary => "bg-primary text-primaryText ",
-					TileColor::Secondary => "bg-secondary text-secondaryText ",
-					TileColor::None => "bg-background text-backgroundText "
-				}
-				+ if brush() == color { "relative z-100 outline outline-3 outline-highlight " } else { " " }
-			on:click=move |_| brush.set(color)
-		>
-			<box-icon name=icon size="md" color="currentColor" />
-		</button>
-	}
-}
-
-#[component]
-fn BrushControls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
-	view! { cx,
-		<div role="radiogroup" aria-label="Werkzeug auswählen" class="flex w-full max-w-sm border-2 border-misc">
-			<BrushButton name="Pinsel 1" icon="brush" color=TileColor::Primary brush />
-			<BrushButton name="Pinsel 2" icon="brush" color=TileColor::Secondary brush />
-			<BrushButton name="Radiergummi" icon="eraser" color=TileColor::None brush />
-		</div>
-	}
-}
-
-#[component]
-fn Controls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
-	view! { cx,
-		<div class="p-6">
-			<BrushControls brush />
-		</div>
-	}
-}
-
-#[component]
-pub fn Editor(cx: Scope, tiling: Signal<Tiling>, colors: Signal<GridColors>) -> impl IntoView {
-	let brush = create_rw_signal(cx, TileColor::Primary);
-	view! { cx,
-		<div class="px-4 sm:px-16 flex flex-col items-center flex-1 w-full min-h-0">
-			<div class="shrink w-full min-h-0">
-				<Canvas tiling colors brush />
-			</div>
-			<Controls brush />
 		</div>
 	}
 }

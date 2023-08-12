@@ -30,6 +30,7 @@ jobs:
           path: ./dist
   deploy:
     needs: build
+    runs-on: ubuntu-latest
     environment:
       name: GitHub Pages
       url: ${{ steps.deployment.outputs.page_url }}

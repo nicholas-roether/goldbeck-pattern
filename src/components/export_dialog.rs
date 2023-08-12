@@ -33,7 +33,7 @@ pub fn ExportDialog(
 							<box-icon name="x" color="currentColor" />
 						</button>
 					</div>
-					<div class="mb-4 flex justify-center h-80 bg-misc shadow-inner">
+					<div class="mb-4 p-4 flex justify-center h-80 bg-misc shadow-inner">
 						<Pattern id="export" export=true tiling colors reps_x=reps reps_y=1 />
 					</div>
 					<div class="flex items-center justify-between">

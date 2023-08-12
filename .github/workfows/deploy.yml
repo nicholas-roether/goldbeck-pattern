@@ -1,0 +1,38 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Install JavaScript Dependencies
+        run: yarn
+      - name: Build Project
+        run: trunk build
+      - name: Upload Artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./dist
+  deploy:
+    needs: build
+    environment:
+      name: GitHub Pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v2

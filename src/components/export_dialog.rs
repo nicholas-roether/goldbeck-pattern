@@ -27,17 +27,25 @@ pub fn ExportDialog(
 		<Show when=open fallback=|_| () >
 			<div class="z-40 w-screen h-screen absolute inset-0 bg-background/70 flex items-center justify-center">
 				<section class="w-full max-w-2xl p-4 m-4 bg-primary text-primaryText shadow-xl">
-					<div class="flex pb-4">
+					<div class="flex mb-4">
 						<h1 class="flex-1 font-bold text-xl">"Muster Exportieren"</h1>
 						<button class="inline-block" aria-label="Schließen" on:click=move |_| open.set(false)>
 							<box-icon name="x" color="currentColor" />
 						</button>
 					</div>
-					<div class="flex justify-center h-80 bg-misc shadow-inner">
+					<div class="mb-4 flex justify-center h-80 bg-misc shadow-inner">
 						<Pattern id="export" export=true tiling colors reps_x=reps reps_y=1 />
 					</div>
-					<input type="range" min="1" max="6" value=reps on:input=on_reps_change />
-					<button on:click=on_export>"Exportieren"</button>
+					<div class="flex items-center justify-between">
+						<span>
+							<label for="exportRepsRange">Wiederholungen: {reps}</label><br />
+							<input type="range" id="exportRepsRange" min="1" max="6" value=reps on:input=on_reps_change />
+						</span>
+						<button
+							class="px-6 py-2 h-12 bg-secondary text-secondaryText hover:outline outline-2 outline-highlight"
+							on:click=on_export
+						>"Exportieren"</button>
+					</div>
 				</section>
 			</div>
 		</Show>

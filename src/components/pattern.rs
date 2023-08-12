@@ -54,8 +54,10 @@ fn ExportTile<'a>(
 	view! { cx,
 		<polygon
 			points=shape.svg_path()
-			fill=fill
-			shape-rendering="crispEdges"
+			fill=fill.clone()
+			stroke=fill
+			stroke-width="2"
+			vector-effect="non-scaling-stroke"
 		/>
 	}
 }
@@ -66,13 +68,14 @@ fn Tile(cx: Scope, shape: Shape, #[prop(into)] color: Signal<TileColor>) -> impl
 		<polygon
 			class=move || cls! {
 				match color() {
-					TileColor::Primary => "fill-primary",
-					TileColor::Secondary => "fill-secondary",
-					TileColor::None => "fill-transparent"
+					TileColor::Primary => "fill-primary stroke-primary",
+					TileColor::Secondary => "fill-secondary stroke-secondary",
+					TileColor::None => "fill-transparent stroke-transparent"
 				}
 			}
 			points=shape.svg_path()
-			shape-rendering="crispEdges"
+			stroke-width="2"
+			vector-effect="non-scaling-stroke"
 		/>
 	}
 }

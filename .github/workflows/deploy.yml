@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Cargo
-        run: curl https://sh.rustup.rs -sSf | sh
+        run: curl https://sh.rustup.rs -sSf | sh -s -- -y
       - name: Install Trunk
         run: sudo cargo install trunk
       - name: Checkout

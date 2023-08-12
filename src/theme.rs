@@ -68,9 +68,13 @@ impl ThemeData {
 	}
 
 	fn color(computed_styles: &CssStyleDeclaration, name: &'static str) -> String {
-		let var_name = format!("--twc-{name}");
-		let components = Self::get_property(computed_styles, &var_name);
-		format!("hsl({components})")
+		let var_name = format!("--theme-{name}");
+		let var_value = Self::get_property(computed_styles, &var_name);
+		let components = var_value.split(' ').collect::<Vec<&str>>();
+		format!(
+			"rgb({}, {}, {})",
+			components[0], components[1], components[2]
+		)
 	}
 }
 

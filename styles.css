@@ -2,7 +2,57 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    @apply bg-background text-backgroundText transition-colors;
-  }
+	:root {
+		@apply bg-background text-backgroundText transition-colors;
+
+		--color-carbon: 43 50 58;
+		--color-blue: 62 186 236;
+		--color-white: 255 255 255;
+		--color-gold: 193 163 104;
+		--color-aluminium: 184 187 190;
+	}
+
+	[data-theme="bubbles"] {
+		--theme-background: var(--color-white);
+		--theme-backgroundText: var(--color-carbon);
+		--theme-primary: var(--color-carbon);
+		--theme-primaryText: var(--color-white);
+		--theme-secondary: var(--color-blue);
+		--theme-secondaryText: var(--color-carbon);
+		--theme-misc: var(--color-aluminium);
+		--theme-highlight: var(--color-gold);
+	}
+
+	[data-theme="icy"] {
+		--theme-background: var(--color-carbon);
+		--theme-backgroundText: var(--color-white);
+		--theme-primary: var(--color-white);
+		--theme-primaryText: var(--color-carbon);
+		--theme-secondary: var(--color-blue);
+		--theme-secondaryText: var(--color-carbon);
+		--theme-misc: var(--color-aluminium);
+		--theme-highlight: var(--color-gold);
+	}
+
+	[data-theme="glisten"] {
+		--theme-background: var(--color-white);
+		--theme-backgroundText: var(--color-carbon);
+		--theme-primary: var(--color-carbon);
+		--theme-primaryText: var(--color-white);
+		--theme-secondary: var(--color-gold);
+		--theme-secondaryText: var(--color-carbon);
+		--theme-misc: var(--color-aluminium);
+		--theme-highlight: var(--color-blue);
+	}
+
+	[data-theme="noble"] {
+		--theme-background: var(--color-carbon);
+		--theme-backgroundText: var(--color-white);
+		--theme-primary: var(--color-blue);
+		--theme-primaryText: var(--color-carbon);
+		--theme-secondary: var(--color-gold);
+		--theme-secondaryText: var(--color-carbon);
+		--theme-misc: var(--color-aluminium);
+		--theme-highlight: var(--color-white);
+	}
 }

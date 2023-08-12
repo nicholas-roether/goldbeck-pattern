@@ -142,7 +142,8 @@ const fn generate_lines<const NUM_LINES: usize>(reps_x: usize, reps_y: usize) ->
 pub enum TilingFormat {
 	F5X5,
 	F10X10,
-	F10X15
+	F10X15,
+	F15X15
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -181,6 +182,15 @@ impl Tiling {
 		3.0 * PATTERN_SIZE_SQUARES as f32
 	);
 
+	const F15X15_TILES: [Tile; num_tiles(3, 3)] = generate_tiles(3, 3);
+	const F15X15_LINES: [Line; num_lines(3, 3)] = generate_lines(3, 3);
+	pub const F15X15: Self = Self::new(
+		&Self::F15X15_TILES,
+		&Self::F15X15_LINES,
+		3.0 * PATTERN_SIZE_SQUARES as f32,
+		3.0 * PATTERN_SIZE_SQUARES as f32
+	);
+
 	const fn new(
 		tiles: &'static [Tile],
 		lines: &'static [Line],
@@ -199,7 +209,8 @@ impl Tiling {
 		match format {
 			TilingFormat::F5X5 => Self::F5X5,
 			TilingFormat::F10X10 => Self::F10X10,
-			TilingFormat::F10X15 => Self::F10X15
+			TilingFormat::F10X15 => Self::F10X15,
+			TilingFormat::F15X15 => Self::F15X15
 		}
 	}
 

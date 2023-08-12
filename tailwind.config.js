@@ -1,12 +1,14 @@
-import { createThemes } from "tw-colors";
+function themeColor(name) {
+	return `rgb(var(--theme-${name}) / <alpha-value>)`;
+}
 
-const COLORS = {
-	carbon: "#2b323a",
-	blue: "#3ebaec",
-	white: "#fff",
-	gold: "#c1a368",
-	aluminium: "#b8bbbe",
-};
+function importTheme(...names) {
+	let colors = {};
+	for (let name of names) {
+		colors[name] = themeColor(name);
+	}
+	return colors;
+}
 
 export default {
 	content: {
@@ -16,49 +18,17 @@ export default {
 		fontFamily: {
 			sans: ["Montserrat", "sans-serif"],
 		},
+		extend: {
+			colors: importTheme(
+				"background",
+				"backgroundText",
+				"primary",
+				"primaryText",
+				"secondary",
+				"secondaryText",
+				"misc",
+				"highlight"
+			)
+		}
 	},
-	plugins: [
-		createThemes({
-			bubbles: {
-				background: COLORS.white,
-				backgroundText: COLORS.carbon,
-				primary: COLORS.carbon,
-				primaryText: COLORS.white,
-				secondary: COLORS.blue,
-				secondaryText: COLORS.carbon,
-				misc: COLORS.aluminium,
-				highlight: COLORS.gold
-			},
-			icy: {
-				background: COLORS.carbon,
-				backgroundText: COLORS.white,
-				primary: COLORS.white,
-				primaryText: COLORS.carbon,
-				secondary: COLORS.blue,
-				secondaryText: COLORS.carbon,
-				misc: COLORS.aluminium,
-				highlight: COLORS.gold
-			},
-			glisten: {
-				background: COLORS.white,
-				backgroundText: COLORS.carbon,
-				primary: COLORS.carbon,
-				primaryText: COLORS.white,
-				secondary: COLORS.gold,
-				secondaryText: COLORS.carbon,
-				misc: COLORS.aluminium,
-				highlight: COLORS.blue
-			},
-			noble: {
-				background: COLORS.carbon,
-				backgroundText: COLORS.white,
-				primary: COLORS.blue,
-				primaryText: COLORS.carbon,
-				secondary: COLORS.gold,
-				secondaryText: COLORS.carbon,
-				misc: COLORS.aluminium,
-				highlight: COLORS.white
-			}
-		})
-	],
 };

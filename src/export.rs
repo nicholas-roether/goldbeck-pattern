@@ -14,7 +14,7 @@ fn create_svg_file(content: String) -> Result<String, JsValue> {
 	Url::create_object_url_with_blob(&blob)
 }
 
-const EXPORT_HEIGHT: i32 = 500;
+const EXPORT_HEIGHT: i32 = 1000;
 
 fn render_svg(elem: SvgElement) -> Result<String, JsValue> {
 	let document = window().unwrap().document().unwrap();
@@ -23,10 +23,23 @@ fn render_svg(elem: SvgElement) -> Result<String, JsValue> {
 		.create_document(Some("http://www.w3.org/2000/svg"), "svg")?;
 
 	let svg_elem = svg_doc.document_element().unwrap();
-	if let Some(view_box) = elem.get_attribute("viewBox") {
-		svg_elem.set_attribute("viewBox", &view_box)?;
-	}
-	svg_elem.set_attribute("height", &format!("{EXPORT_HEIGHT}px"))?;
+	let view_box = elem
+		.get_attribute("viewBox")
+		.expect("Export SVG is missing viewBox attribute!");
+	let vb_parts = view_box.split(' ').collect::<Vec<&str>>();
+	let vb_width: i32 = vb_parts[2]
+		.parse()
+		.expect("Failed to parse export SVG's viewBox width");
+	let vb_height: i32 = vb_parts[3]
+		.parse()
+		.expect("Failed to parse export SVG's viewBox height");
+
+	let aspect_ratio = vb_width / vb_height;
+	let export_width = EXPORT_HEIGHT * aspect_ratio;
+
+	svg_elem.set_attribute("viewBox", &view_box)?;
+	svg_elem.set_attribute("width", &export_width.to_string())?;
+	svg_elem.set_attribute("height", &EXPORT_HEIGHT.to_string())?;
 
 	let children = elem.children();
 	let mut i = 0;

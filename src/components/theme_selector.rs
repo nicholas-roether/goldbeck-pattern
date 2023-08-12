@@ -25,8 +25,8 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 			aria-checked=is_active
 			tabindex="0"
 			aria-label=theme.name()
-			width="50px"
-			height="50px"
+			width="50"
+			height="50"
 			viewBox="0 0 100 100"
 			class=move || cls! {
 				"rounded-full transition-all",

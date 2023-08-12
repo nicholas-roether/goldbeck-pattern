@@ -74,6 +74,7 @@ fn FormatSelector(cx: Scope, format: RwSignal<TilingFormat>) -> impl IntoView {
 			<option value=TilingFormat::F5X5 as u8>"5×5"</option>
 			<option value=TilingFormat::F10X10 as u8>"10×10"</option>
 			<option value=TilingFormat::F10X15 as u8>"10×15"</option>
+			<option value=TilingFormat::F15X15 as u8>"15×15"</option>
 		</select>
 	}
 }

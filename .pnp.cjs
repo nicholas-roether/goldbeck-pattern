@@ -28,8 +28,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
-            ["tailwindcss", "npm:3.3.3"],\
-            ["tw-colors", "virtual:70d01f2d42bcc44b71f5a8c6741da6d7a6250c2e1dd2d837a10929d2b10a7e56cb9c6796bc52e8b35afba0e4b3c085cd48aa8565d4f0788c63fe5a908aa5c7e4#npm:2.0.3"]\
+            ["tailwindcss", "npm:3.3.3"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -417,17 +416,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["color", [\
-        ["npm:4.2.3", {\
-          "packageLocation": "./.yarn/cache/color-npm-4.2.3-4a23227581-0579629c02.zip/node_modules/color/",\
-          "packageDependencies": [\
-            ["color", "npm:4.2.3"],\
-            ["color-convert", "npm:2.0.1"],\
-            ["color-string", "npm:1.9.1"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["color-convert", [\
         ["npm:2.0.1", {\
           "packageLocation": "./.yarn/cache/color-convert-npm-2.0.1-79730e935b-79e6bdb9fd.zip/node_modules/color-convert/",\
@@ -443,17 +431,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/color-name-npm-1.1.4-025792b0ea-b044585952.zip/node_modules/color-name/",\
           "packageDependencies": [\
             ["color-name", "npm:1.1.4"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["color-string", [\
-        ["npm:1.9.1", {\
-          "packageLocation": "./.yarn/cache/color-string-npm-1.9.1-dc020e56be-c13fe7cff7.zip/node_modules/color-string/",\
-          "packageDependencies": [\
-            ["color-string", "npm:1.9.1"],\
-            ["color-name", "npm:1.1.4"],\
-            ["simple-swizzle", "npm:0.2.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -661,15 +638,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["flat", [\
-        ["npm:5.0.2", {\
-          "packageLocation": "./.yarn/cache/flat-npm-5.0.2-12748102a5-12a1536ac7.zip/node_modules/flat/",\
-          "packageDependencies": [\
-            ["flat", "npm:5.0.2"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["foreground-child", [\
         ["npm:3.1.1", {\
           "packageLocation": "./.yarn/cache/foreground-child-npm-3.1.1-77e78ed774-139d270bc8.zip/node_modules/foreground-child/",\
@@ -807,8 +775,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["goldbeck-pattern", "workspace:."],\
-            ["tailwindcss", "npm:3.3.3"],\
-            ["tw-colors", "virtual:70d01f2d42bcc44b71f5a8c6741da6d7a6250c2e1dd2d837a10929d2b10a7e56cb9c6796bc52e8b35afba0e4b3c085cd48aa8565d4f0788c63fe5a908aa5c7e4#npm:2.0.3"]\
+            ["tailwindcss", "npm:3.3.3"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -940,15 +907,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["is-arrayish", [\
-        ["npm:0.3.2", {\
-          "packageLocation": "./.yarn/cache/is-arrayish-npm-0.3.2-f856180f79-977e64f54d.zip/node_modules/is-arrayish/",\
-          "packageDependencies": [\
-            ["is-arrayish", "npm:0.3.2"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["is-binary-path", [\
         ["npm:2.1.0", {\
           "packageLocation": "./.yarn/cache/is-binary-path-npm-2.1.0-e61d46f557-84192eb88c.zip/node_modules/is-binary-path/",\
@@ -1058,15 +1016,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lines-and-columns-npm-1.2.4-d6c7cc5799-0c37f9f7fa.zip/node_modules/lines-and-columns/",\
           "packageDependencies": [\
             ["lines-and-columns", "npm:1.2.4"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["lodash.foreach", [\
-        ["npm:4.5.0", {\
-          "packageLocation": "./.yarn/cache/lodash.foreach-npm-4.5.0-ca8531894e-a940386b15.zip/node_modules/lodash.foreach/",\
-          "packageDependencies": [\
-            ["lodash.foreach", "npm:4.5.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -1769,16 +1718,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["simple-swizzle", [\
-        ["npm:0.2.2", {\
-          "packageLocation": "./.yarn/cache/simple-swizzle-npm-0.2.2-8dee37fad1-a7f3f2ab5c.zip/node_modules/simple-swizzle/",\
-          "packageDependencies": [\
-            ["simple-swizzle", "npm:0.2.2"],\
-            ["is-arrayish", "npm:0.3.2"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["smart-buffer", [\
         ["npm:4.2.0", {\
           "packageLocation": "./.yarn/cache/smart-buffer-npm-4.2.0-5ac3f668bb-b5167a7142.zip/node_modules/smart-buffer/",\
@@ -1986,31 +1925,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ts-interface-checker-npm-0.1.13-0c7b064494-20c29189c2.zip/node_modules/ts-interface-checker/",\
           "packageDependencies": [\
             ["ts-interface-checker", "npm:0.1.13"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["tw-colors", [\
-        ["npm:2.0.3", {\
-          "packageLocation": "./.yarn/cache/tw-colors-npm-2.0.3-0b03a4841a-ca3f4c45b8.zip/node_modules/tw-colors/",\
-          "packageDependencies": [\
-            ["tw-colors", "npm:2.0.3"]\
-          ],\
-          "linkType": "SOFT"\
-        }],\
-        ["virtual:70d01f2d42bcc44b71f5a8c6741da6d7a6250c2e1dd2d837a10929d2b10a7e56cb9c6796bc52e8b35afba0e4b3c085cd48aa8565d4f0788c63fe5a908aa5c7e4#npm:2.0.3", {\
-          "packageLocation": "./.yarn/__virtual__/tw-colors-virtual-308f0e3dde/0/cache/tw-colors-npm-2.0.3-0b03a4841a-ca3f4c45b8.zip/node_modules/tw-colors/",\
-          "packageDependencies": [\
-            ["tw-colors", "virtual:70d01f2d42bcc44b71f5a8c6741da6d7a6250c2e1dd2d837a10929d2b10a7e56cb9c6796bc52e8b35afba0e4b3c085cd48aa8565d4f0788c63fe5a908aa5c7e4#npm:2.0.3"],\
-            ["@types/tailwindcss", null],\
-            ["color", "npm:4.2.3"],\
-            ["flat", "npm:5.0.2"],\
-            ["lodash.foreach", "npm:4.5.0"],\
-            ["tailwindcss", "npm:3.3.3"]\
-          ],\
-          "packagePeers": [\
-            "@types/tailwindcss",\
-            "tailwindcss"\
           ],\
           "linkType": "HARD"\
         }]\

@@ -165,9 +165,9 @@ pub fn Canvas(
 			<div class="absolute flex inset-0 mx-[-100%] h-full z-0">
 				<Pattern id="canvas" tiling colors reps_x=3 reps_y=1 />
 				<div class="absolute flex inset-0 w-full h-full">
-					<div class="flex-1 bg-background/25 transition-colors" />
+					<div class="flex-1 bg-background/50 transition-colors" />
 					<div class="flex-1 bg-transparent" />
-					<div class="flex-1 bg-background/75 transition-colors" />
+					<div class="flex-1 bg-background/50 transition-colors" />
 				</div>
 			</div>
 			<div class="relative z-1 w-full outline outline-2 outline-misc shadow-2xl ">

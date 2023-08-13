@@ -1,7 +1,12 @@
-use leptos::{ev::MouseEvent, *};
+use js_sys::JSON;
+use leptos::{
+	ev::{MouseEvent, TouchEvent},
+	leptos_dom::console_log,
+	*
+};
+use web_sys::{MouseEventInit, SvgElement};
 
 use crate::{
-	cls,
 	components::pattern::{GridColors, Pattern, TileColor},
 	tiling::{Shape, Tiling}
 };
@@ -13,45 +18,39 @@ fn TileOverlay(
 	color: RwSignal<TileColor>,
 	brush: Signal<TileColor>
 ) -> impl IntoView {
-	let (hovering, set_hovering) = create_signal(cx, false);
+	let paint = move || color.set(brush.get_untracked());
 
 	let handle_mouse = move |buttons: u16| {
-		let new_color = brush.get_untracked();
-		if buttons & 0x01 == 1 {
-			color.set(new_color);
+		if buttons & 0b01 == 1 {
+			paint();
 		}
 	};
 
 	let on_mouse_enter = move |evt: MouseEvent| {
-		set_hovering(true);
+		let target: SvgElement = event_target(&evt);
+		target.focus().unwrap_or(());
 		handle_mouse(evt.buttons());
-	};
-
-	let on_mouse_leave = move |_: MouseEvent| {
-		set_hovering(false);
 	};
 
 	let on_mouse_down = move |evt: MouseEvent| {
 		handle_mouse(evt.buttons());
 	};
 
+	let on_touch_start = move |_: TouchEvent| {
+		paint();
+	};
+
 	view! { cx,
 		<polygon
-			class=move || cls! {
-				if hovering() {
-					"cursor-crosshair stroke-highlight"
-				} else {
-					"cursor-crosshair"
-				}
-			}
+			class="cursor-crosshair hover:stroke-highlight"
 			points=shape.svg_path()
 			vector-effect="non-scaling-stroke"
 			fill="transparent"
 			stroke-width="4"
 			stroke-linejoin="round"
 			on:mouseenter=on_mouse_enter
-			on:mouseleave=on_mouse_leave
 			on:mousedown=on_mouse_down
+			on:touchstart=on_touch_start
 		/>
 	}
 }
@@ -104,8 +103,35 @@ fn Overlay(
 	let width = Signal::derive(cx, move || tiling.with(|t| t.viewport_width()));
 	let height = Signal::derive(cx, move || tiling.with(|t| t.viewport_height()));
 
+	let on_touch_move = |evt: TouchEvent| {
+		if evt.touches().length() != 1 {
+			return;
+		};
+		evt.prevent_default();
+		let touch = evt.touches().item(0).unwrap();
+		let Some(elem) =
+			document().element_from_point(touch.page_x() as f32, touch.page_y() as f32)
+		else {
+			return;
+		};
+		console_log(&elem.tag_name());
+		elem.dispatch_event(
+			&MouseEvent::new_with_mouse_event_init_dict(
+				"mouseenter",
+				MouseEventInit::new().buttons(0b01)
+			)
+			.unwrap()
+		)
+		.expect("Failed to dispatch mouseenter event");
+	};
+
 	view! { cx,
-		<svg viewBox=view_box width="100%" class="block outline outline-2 outline-misc shadow-2xl">
+		<svg
+			viewBox=view_box
+			width="100%"
+			class="block outline outline-2 outline-misc shadow-2xl touch-none"
+			on:touchmove=on_touch_move
+		>
 			<GridLines tiling width height />
 			{move || tiling
 				.with(|t| t.iter_tiles())

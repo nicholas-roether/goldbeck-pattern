@@ -32,5 +32,11 @@
 		<noscript>
 			You need to enable JavaScript and WebAssembly to use this site.
 		</noscript>
+		<script>
+			// Hack for safari to stop zooming into SVGs
+			document.addEventListener("dblclick", (e) => {
+				e.preventDefault();
+			});
+		</script>
 	</body>
 </html>

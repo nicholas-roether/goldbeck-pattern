@@ -1,6 +1,5 @@
 use std::rc::Rc;
 
-use js_sys::JSON;
 use leptos::{
 	ev::{MouseEvent, TouchEvent},
 	leptos_dom::console_log,
@@ -164,9 +163,12 @@ pub fn Canvas(
 	view! { cx,
 		<div class="relative h-full max-w-full m-auto" style:aspect-ratio=aspect_ratio>
 			<div class="absolute flex inset-0 mx-[-100%] h-full z-0">
-				<Pattern id="canvas-bg-left" tiling colors reps_x=1 reps_y=1 background=true />
-				<Pattern id="canvas" tiling colors reps_x=1 reps_y=1 />
-				<Pattern id="canvas-bg-right" tiling colors reps_x=1 reps_y=1 background=true />
+				<Pattern id="canvas" tiling colors reps_x=3 reps_y=1 />
+				<div class="absolute flex inset-0 w-full h-full">
+					<div class="flex-1 bg-background/25" />
+					<div class="flex-1 bg-transparent" />
+					<div class="flex-1 bg-background/75" />
+				</div>
 			</div>
 			<div class="relative z-1 w-full">
 				<Overlay tiling colors brush=brush.into() />

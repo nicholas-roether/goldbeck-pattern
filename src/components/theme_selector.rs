@@ -20,31 +20,31 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 	};
 
 	view! { cx,
-		<svg
+		<div
 			role="radio"
 			aria-checked=is_active
 			tabindex="0"
 			aria-label=theme.name()
-			width="50"
-			height="50"
-			viewBox="0 0 100 100"
 			class=move || cls! {
-				"rounded-full transition-all",
+				"rounded-full transition-all w-10 h-10 sm:w-12 sm:h-12 outline overflow-hidden",
 				if is_active() {
-					"shadow-lg scale-125 border-2 border-highlight"
+					"shadow-2xl outline-3 outline-highlight"
 				} else {
-					"cursor-pointer border-2 border-misc hover:shadow-md"
+					"cursor-pointer outline-2 outline-misc hover:shadow-md"
 				}
 			}
 			on:click=move |_| theme_ctx.set(theme)
 			on:keydown=on_keydown
-		>
-			<g data-theme=theme.name()>
-				<rect x="0" y="0" width="100" height="100" class="fill-background" />
+		 >
+			<svg
+				viewBox="0 0 100 100"
+				class="w-full h-full bg-background"
+				data-theme=theme.name()
+			>
 				<circle cx="33" cy="62" r="25" class="fill-primary" />
 				<circle cx="72" cy="40" r="15" class="fill-secondary" />
-			</g>
-		</svg>
+			</svg>
+		</div>
 	}
 }
 
@@ -54,7 +54,7 @@ pub fn ThemeSelector(cx: Scope) -> impl IntoView {
 		<div
 			role="radiogroup"
 			aria-label="Farbschema"
-			class="p-6 w-full max-w-sm mx-auto flex justify-between"
+			class="p-3 sm:p-6 w-full max-w-sm mx-auto flex justify-between"
 		>
 			<ThemeButton theme=Theme::Bubbles />
 			<ThemeButton theme=Theme::Icy />

@@ -130,7 +130,7 @@ fn Overlay(
 		<svg
 			viewBox=view_box
 			width="100%"
-			class="block outline outline-2 outline-misc shadow-2xl touch-none"
+			class="block touch-none"
 			on:touchmove=on_touch_move
 		>
 			<GridLines tiling width height />
@@ -165,12 +165,12 @@ pub fn Canvas(
 			<div class="absolute flex inset-0 mx-[-100%] h-full z-0">
 				<Pattern id="canvas" tiling colors reps_x=3 reps_y=1 />
 				<div class="absolute flex inset-0 w-full h-full">
-					<div class="flex-1 bg-background/25" />
+					<div class="flex-1 bg-background/25 transition-colors" />
 					<div class="flex-1 bg-transparent" />
-					<div class="flex-1 bg-background/75" />
+					<div class="flex-1 bg-background/75 transition-colors" />
 				</div>
 			</div>
-			<div class="relative z-1 w-full">
+			<div class="relative z-1 w-full outline outline-2 outline-misc shadow-2xl ">
 				<Overlay tiling colors brush=brush.into() />
 			</div>
 		</div>

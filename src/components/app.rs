@@ -26,7 +26,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 	view! { cx,
 		<main class="w-screen h-screen flex flex-col items-center overflow-hidden">
 			<ThemeSelector />
-			<div class="w-full min-h-0 px-4 sm:px-16">
+			<div class="w-full min-h-0 p-3 sm:px-16">
 				<Canvas tiling colors brush />
 			</div>
 			<Controls brush exporting format />

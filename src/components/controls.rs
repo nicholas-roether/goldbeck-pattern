@@ -87,7 +87,7 @@ pub fn Controls(
 	format: RwSignal<TilingFormat>
 ) -> impl IntoView {
 	view! { cx,
-		<div class="p-6 w-full max-w-sm flex justify-between gap-4 flex-col sm:flex-row">
+		<div class="p-3 sm:p-6 w-full max-w-sm flex justify-between gap-2 sm:gap-4 flex-col sm:flex-row">
 			<FormatSelector format />
 			<BrushControls brush />
 			<ExportButton exporting />

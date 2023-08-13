@@ -1,4 +1,4 @@
-use std::iter;
+use std::{iter, rc::Rc};
 
 use leptos::*;
 
@@ -81,7 +81,7 @@ fn Tile(cx: Scope, shape: Shape, #[prop(into)] color: Signal<TileColor>) -> impl
 }
 
 #[component]
-fn ExportGrid(cx: Scope, tiling: Tiling, colors: GridColors) -> impl IntoView {
+fn ExportGrid(cx: Scope, tiling: Rc<Tiling>, colors: GridColors) -> impl IntoView {
 	let theme_data = ThemeData::load();
 	move || {
 		tiling
@@ -96,7 +96,7 @@ fn ExportGrid(cx: Scope, tiling: Tiling, colors: GridColors) -> impl IntoView {
 }
 
 #[component]
-fn Grid(cx: Scope, tiling: Signal<Tiling>, colors: Signal<GridColors>) -> impl IntoView {
+fn Grid(cx: Scope, tiling: Signal<Rc<Tiling>>, colors: Signal<GridColors>) -> impl IntoView {
 	move || {
 		tiling
 			.with(|t| t.iter_tiles())
@@ -113,7 +113,7 @@ fn Grid(cx: Scope, tiling: Signal<Tiling>, colors: Signal<GridColors>) -> impl I
 pub fn Pattern(
 	cx: Scope,
 	id: &'static str,
-	#[prop(into)] tiling: Signal<Tiling>,
+	#[prop(into)] tiling: Signal<Rc<Tiling>>,
 	#[prop(into)] colors: Signal<GridColors>,
 	#[prop(into)] reps_x: MaybeSignal<usize>,
 	#[prop(into)] reps_y: MaybeSignal<usize>,

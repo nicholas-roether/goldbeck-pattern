@@ -146,12 +146,18 @@ pub enum TilingFormat {
 	F15X15
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug)]
 pub struct Tiling {
 	tiles: &'static [Tile],
 	lines: &'static [Line],
 	viewport_width: f32,
 	viewport_height: f32
+}
+
+impl PartialEq for Tiling {
+	fn eq(&self, other: &Self) -> bool {
+		self.tiles.len() == other.tiles.len()
+	}
 }
 
 impl Tiling {

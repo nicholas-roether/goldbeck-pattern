@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use leptos::*;
 
 use crate::{
@@ -14,7 +16,7 @@ use crate::{
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
 	let format = create_rw_signal(cx, TilingFormat::F5X5);
-	let tiling = create_memo(cx, move |_| Tiling::load(format()));
+	let tiling = create_memo(cx, move |_| Rc::new(Tiling::load(format())));
 	let colors = create_memo(cx, move |_| {
 		GridColors::new(cx, tiling.with(|t| t.num_tiles()))
 	});

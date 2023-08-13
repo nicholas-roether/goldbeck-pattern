@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use js_sys::JSON;
 use leptos::{
 	ev::{MouseEvent, TouchEvent},
@@ -58,7 +60,7 @@ fn TileOverlay(
 #[component]
 fn GridLines(
 	cx: Scope,
-	tiling: Signal<Tiling>,
+	tiling: Signal<Rc<Tiling>>,
 	width: Signal<f32>,
 	height: Signal<f32>
 ) -> impl IntoView {
@@ -94,7 +96,7 @@ fn GridLines(
 #[component]
 fn Overlay(
 	cx: Scope,
-	tiling: Signal<Tiling>,
+	tiling: Signal<Rc<Tiling>>,
 	colors: Signal<GridColors>,
 	brush: Signal<TileColor>
 ) -> impl IntoView {
@@ -150,7 +152,7 @@ fn Overlay(
 #[component]
 pub fn Canvas(
 	cx: Scope,
-	#[prop(into)] tiling: Signal<Tiling>,
+	#[prop(into)] tiling: Signal<Rc<Tiling>>,
 	#[prop(into)] colors: Signal<GridColors>,
 	brush: RwSignal<TileColor>
 ) -> impl IntoView {

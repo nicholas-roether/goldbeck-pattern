@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use leptos::{ev::Event, *};
 
 use crate::{components::pattern::Pattern, export::export_svg, tiling::Tiling};
@@ -8,7 +10,7 @@ use super::pattern::GridColors;
 pub fn ExportDialog(
 	cx: Scope,
 	open: RwSignal<bool>,
-	#[prop(into)] tiling: Signal<Tiling>,
+	#[prop(into)] tiling: Signal<Rc<Tiling>>,
 	#[prop(into)] colors: Signal<GridColors>
 ) -> impl IntoView {
 	let (reps, set_reps) = create_signal(cx, 3);

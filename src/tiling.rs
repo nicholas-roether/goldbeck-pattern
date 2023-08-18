@@ -4,13 +4,17 @@ pub struct Vertex {
 	pub y: f32
 }
 
+fn svg_precision(val: f32) -> f32 {
+	(val * 1000.0).round() / 1000.0
+}
+
 impl Vertex {
 	pub const fn new(x: f32, y: f32) -> Self {
 		Self { x, y }
 	}
 
 	pub fn svg_point(&self) -> String {
-		format!("{},{}", self.x, self.y)
+		format!("{},{}", svg_precision(self.x), svg_precision(self.y))
 	}
 }
 

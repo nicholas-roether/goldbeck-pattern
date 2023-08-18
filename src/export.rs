@@ -16,14 +16,32 @@ fn create_svg_file(content: String) -> Result<String, JsValue> {
 
 const EXPORT_HEIGHT: i32 = 1000;
 
-fn render_svg(elem: SvgElement) -> Result<String, JsValue> {
+fn copy_children(source: &SvgElement, target: &SvgElement) -> Result<(), JsValue> {
+	let children = source.children();
+	let mut i = 0;
+	while let Some(child) = children.item(i) {
+		if let Ok(svg_child) = child.dyn_into::<SvgElement>() {
+			let clone = svg_child.clone_node()?.dyn_into::<SvgElement>().unwrap();
+			copy_children(&svg_child, &clone)?;
+			target.append_child(&clone)?;
+		}
+		i += 1;
+	}
+	Ok(())
+}
+
+fn render_svg(elem_in_page: SvgElement) -> Result<String, JsValue> {
 	let document = window().unwrap().document().unwrap();
 	let svg_doc = document
 		.implementation()?
 		.create_document(Some("http://www.w3.org/2000/svg"), "svg")?;
 
-	let svg_elem = svg_doc.document_element().unwrap();
-	let view_box = elem
+	let svg_elem = svg_doc
+		.document_element()
+		.unwrap()
+		.dyn_into::<SvgElement>()
+		.unwrap();
+	let view_box = elem_in_page
 		.get_attribute("viewBox")
 		.expect("Export SVG is missing viewBox attribute!");
 	let vb_parts = view_box.split(' ').collect::<Vec<&str>>();
@@ -41,12 +59,7 @@ fn render_svg(elem: SvgElement) -> Result<String, JsValue> {
 	svg_elem.set_attribute("width", &export_width.to_string())?;
 	svg_elem.set_attribute("height", &EXPORT_HEIGHT.to_string())?;
 
-	let children = elem.children();
-	let mut i = 0;
-	while let Some(child) = children.item(i) {
-		svg_elem.append_child(&child.clone_node_with_deep(true)?)?;
-		i += 1;
-	}
+	copy_children(&elem_in_page, &svg_elem)?;
 
 	let serializer = XmlSerializer::new()?;
 	let xml = serializer.serialize_to_string(&svg_doc)?;

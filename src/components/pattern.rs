@@ -157,7 +157,7 @@ pub fn Pattern(
 					width=pattern_width
 					height=pattern_height
 					patternUnits="userSpaceOnUse"
-					view_box=pattern_view_box
+					viewBox=pattern_view_box
 				>
 					{grid}
 				</pattern>

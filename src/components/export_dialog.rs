@@ -42,7 +42,7 @@ pub fn ExportDialog(
 			<div class="z-40 w-screen h-screen absolute inset-0 bg-background/70 flex items-center justify-center overflow-hidden">
 				<section class="flex-1 max-w-2xl p-4 m-4 bg-primary text-primaryText shadow-xl">
 					<div class="flex mb-4">
-						<h1 class="flex-1 font-bold text-xl">"Muster Exportieren"</h1>
+						<h1 class="flex-1 font-bold text-xl">"Muster exportieren"</h1>
 						<button
 							class="inline-block"
 							aria-label="Schließen"
@@ -68,11 +68,11 @@ pub fn ExportDialog(
 							/>
 						</span>
 						<span class="flex-1"></span>
-						<span class="bg-background text-backgroundText relative">
+						<span class="inline-block h-12 bg-background text-backgroundText relative isolate">
 							<select
 								aria-label="Dateiformat"
 								on:change=on_format_change
-								class="appearance-none bg-transparent h-full pl-6 pr-8 py-2"
+								class="appearance-none bg-transparent pl-6 pr-8 py-2 h-full"
 							>
 								{all::<OutputFormat>()
 									.map(|opt_format| {
@@ -88,7 +88,7 @@ pub fn ExportDialog(
 									.collect_view()}
 							</select>
 							<box-icon
-								class="inline absolute right-0 h-full mx-1"
+								class="absolute right-0 z-[-1] h-full mx-1"
 								name="chevron-down"
 								color="currentColor"
 							></box-icon>

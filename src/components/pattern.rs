@@ -47,7 +47,7 @@ fn ExportTile<'a>(shape: Shape, color: TileColor, theme_data: &'a ThemeData) -> 
 		TileColor::None => theme_data.background.clone()
 	};
 	view! {
-		<polygon points=shape.svg_path() fill=fill.clone() stroke=fill stroke-width="0.01"></polygon>
+		<polygon points=shape.svg_path() fill=fill.clone() stroke=fill stroke-width="0.05"></polygon>
 	}
 }
 
@@ -148,5 +148,4 @@ pub fn Pattern(
 		</svg>
 	}
 }
-
 

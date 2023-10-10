@@ -1,6 +1,7 @@
 {
   "name": "goldbeck-pattern",
   "packageManager": "yarn@3.6.1",
+  "type": "module",
   "devDependencies": {
     "tailwindcss": "^3.3.3"
   }

@@ -14,7 +14,6 @@ impl DialogContext {
 
 #[component]
 pub fn Dialog(
-	cx: Scope,
 	#[prop(into)] id: String,
 	open: RwSignal<bool>,
 	#[prop(into)] title: String,
@@ -33,7 +32,7 @@ pub fn Dialog(
 	let children = store_value(cx, children);
 
 	view! { cx,
-		<Show when=open fallback=|_| ()>
+		<Show when=open>
 			<div class="z-40 w-screen h-screen absolute inset-0 bg-background/70 flex items-center justify-center overflow-hidden">
 				<section
 					role="dialog"

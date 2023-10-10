@@ -14,16 +14,14 @@ use crate::{
 };
 
 #[component]
-pub fn App(cx: Scope) -> impl IntoView {
-	let format = create_rw_signal(cx, TilingFormat::F5X5);
-	let tiling = create_memo(cx, move |_| Rc::new(Tiling::load(format())));
-	let colors = create_memo(cx, move |_| {
-		GridColors::new(cx, tiling.with(|t| t.num_tiles()))
-	});
-	let brush = create_rw_signal(cx, TileColor::Primary);
-	let exporting = create_rw_signal(cx, false);
+pub fn App() -> impl IntoView {
+	let format = create_rw_signal(TilingFormat::F5X5);
+	let tiling = create_memo(move |_| Rc::new(Tiling::load(format())));
+	let colors = create_memo(move |_| GridColors::new(tiling.with(|t| t.num_tiles())));
+	let brush = create_rw_signal(TileColor::Primary);
+	let exporting = create_rw_signal(false);
 
-	view! { cx,
+	view! {
 		<main class="w-screen h-screen flex flex-col items-center overflow-hidden">
 			<ThemeSelector />
 			<div class="w-full min-h-0 p-3 sm:px-16">

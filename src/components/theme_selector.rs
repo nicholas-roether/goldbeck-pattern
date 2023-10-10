@@ -7,8 +7,8 @@ use crate::{
 };
 
 #[component]
-fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
-	let theme_ctx = use_context::<ThemeCtx>(cx).expect("ThemeButton is missing theme context!");
+fn ThemeButton(theme: Theme) -> impl IntoView {
+	let theme_ctx = use_context::<ThemeCtx>().expect("ThemeButton is missing theme context!");
 
 	let is_active = move || theme_ctx() == theme;
 
@@ -19,7 +19,7 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 		}
 	};
 
-	view! { cx,
+	view! {
 		<div
 			role="radio"
 			aria-checked=is_active
@@ -49,8 +49,8 @@ fn ThemeButton(cx: Scope, theme: Theme) -> impl IntoView {
 }
 
 #[component]
-pub fn ThemeSelector(cx: Scope) -> impl IntoView {
-	view! { cx,
+pub fn ThemeSelector() -> impl IntoView {
+	view! {
 		<div
 			role="radiogroup"
 			aria-label="Farbschema"

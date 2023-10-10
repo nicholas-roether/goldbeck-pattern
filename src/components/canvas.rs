@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use leptos::{
 	ev::{MouseEvent, TouchEvent},
-	leptos_dom::console_log,
+	leptos_dom::logging::console_log,
 	*
 };
 use web_sys::{MouseEventInit, SvgElement};
@@ -14,7 +14,6 @@ use crate::{
 
 #[component]
 fn TileOverlay(
-	cx: Scope,
 	shape: Shape,
 	color: RwSignal<TileColor>,
 	brush: Signal<TileColor>
@@ -41,7 +40,7 @@ fn TileOverlay(
 		paint();
 	};
 
-	view! { cx,
+	view! {
 		<polygon
 			class="cursor-crosshair hover:stroke-highlight"
 			points=shape.svg_path()
@@ -57,17 +56,12 @@ fn TileOverlay(
 }
 
 #[component]
-fn GridLines(
-	cx: Scope,
-	tiling: Signal<Rc<Tiling>>,
-	width: Signal<f32>,
-	height: Signal<f32>
-) -> impl IntoView {
+fn GridLines(tiling: Signal<Rc<Tiling>>, width: Signal<f32>, height: Signal<f32>) -> impl IntoView {
 	let lines = move || {
 		tiling
 			.with(|t| t.iter_lines())
 			.map(|[p1, p2]| {
-				view! { cx,
+				view! {
 					<line
 						class="stroke-misc"
 						x1=p1.x
@@ -79,10 +73,10 @@ fn GridLines(
 					/>
 				}
 			})
-			.collect_view(cx)
+			.collect_view()
 	};
 
-	view! { cx,
+	view! {
 		<defs>
 			<clipPath id="GridLines__centerSquare">
 				<rect x="0" y="0" width=width height=height />
@@ -94,15 +88,14 @@ fn GridLines(
 
 #[component]
 fn Overlay(
-	cx: Scope,
 	tiling: Signal<Rc<Tiling>>,
 	colors: Signal<GridColors>,
 	brush: Signal<TileColor>
 ) -> impl IntoView {
 	let view_box =
 		move || tiling.with(|t| format!("0 0 {} {}", t.viewport_width(), t.viewport_height()));
-	let width = Signal::derive(cx, move || tiling.with(|t| t.viewport_width()));
-	let height = Signal::derive(cx, move || tiling.with(|t| t.viewport_height()));
+	let width = Signal::derive(move || tiling.with(|t| t.viewport_width()));
+	let height = Signal::derive(move || tiling.with(|t| t.viewport_height()));
 
 	let on_touch_move = |evt: TouchEvent| {
 		if evt.touches().length() != 1 {
@@ -126,7 +119,7 @@ fn Overlay(
 		.expect("Failed to dispatch mouseenter event");
 	};
 
-	view! { cx,
+	view! {
 		<svg
 			viewBox=view_box
 			width="100%"
@@ -138,11 +131,11 @@ fn Overlay(
 				.with(|t| t.iter_tiles())
 				.enumerate()
 				.map(|(i, shape)| {
-					view! { cx,
+					view! {
 						<TileOverlay shape color=colors.with(|c| c.get_color(i)) brush />
 					}
 				})
-				.collect_view(cx)
+				.collect_view()
 			}
 		</svg>
 	}
@@ -150,7 +143,6 @@ fn Overlay(
 
 #[component]
 pub fn Canvas(
-	cx: Scope,
 	#[prop(into)] tiling: Signal<Rc<Tiling>>,
 	#[prop(into)] colors: Signal<GridColors>,
 	brush: RwSignal<TileColor>
@@ -160,7 +152,7 @@ pub fn Canvas(
 			.with(|t| t.viewport_width() / t.viewport_height())
 			.to_string()
 	};
-	view! { cx,
+	view! {
 		<div class="relative h-full max-w-full m-auto" style:aspect-ratio=aspect_ratio>
 			<div class="absolute flex inset-0 mx-[-100%] h-full z-0">
 				<Pattern id="canvas" tiling colors reps_x=3 reps_y=1 />

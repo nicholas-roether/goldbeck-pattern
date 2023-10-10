@@ -1,7 +1,7 @@
 use std::iter;
 
 use js_sys::{Array, JsString};
-use leptos::{document, leptos_dom::console_error};
+use leptos::{document, leptos_dom::logging::console_error};
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{window, Blob, BlobPropertyBag, HtmlAnchorElement, SvgElement, Url, XmlSerializer};
 

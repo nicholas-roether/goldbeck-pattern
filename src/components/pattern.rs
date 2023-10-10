@@ -25,9 +25,9 @@ impl Default for TileColor {
 pub struct GridColors(Vec<RwSignal<TileColor>>);
 
 impl GridColors {
-	pub fn new(cx: Scope, size: usize) -> Self {
+	pub fn new(size: usize) -> Self {
 		Self(
-			iter::repeat_with(|| create_rw_signal(cx, TileColor::default()))
+			iter::repeat_with(|| create_rw_signal(TileColor::default()))
 				.take(size)
 				.collect()
 		)
@@ -40,18 +40,13 @@ impl GridColors {
 
 #[component]
 #[allow(clippy::needless_lifetimes)]
-fn ExportTile<'a>(
-	cx: Scope,
-	shape: Shape,
-	color: TileColor,
-	theme_data: &'a ThemeData
-) -> impl IntoView {
+fn ExportTile<'a>(shape: Shape, color: TileColor, theme_data: &'a ThemeData) -> impl IntoView {
 	let fill = match color {
 		TileColor::Primary => theme_data.primary.clone(),
 		TileColor::Secondary => theme_data.secondary.clone(),
 		TileColor::None => theme_data.background.clone()
 	};
-	view! { cx,
+	view! {
 		<polygon
 			points=shape.svg_path()
 			fill=fill.clone()
@@ -63,8 +58,8 @@ fn ExportTile<'a>(
 }
 
 #[component]
-fn Tile(cx: Scope, shape: Shape, #[prop(into)] color: Signal<TileColor>) -> impl IntoView {
-	view! { cx,
+fn Tile(shape: Shape, #[prop(into)] color: Signal<TileColor>) -> impl IntoView {
+	view! {
 		<polygon
 			class=move || cls! {
 				match color() {
@@ -81,7 +76,7 @@ fn Tile(cx: Scope, shape: Shape, #[prop(into)] color: Signal<TileColor>) -> impl
 }
 
 #[component]
-fn ExportGrid(cx: Scope, tiling: Rc<Tiling>, colors: GridColors) -> impl IntoView {
+fn ExportGrid(tiling: Rc<Tiling>, colors: GridColors) -> impl IntoView {
 	let theme_data = ThemeData::load();
 	move || {
 		tiling
@@ -89,29 +84,28 @@ fn ExportGrid(cx: Scope, tiling: Rc<Tiling>, colors: GridColors) -> impl IntoVie
 			.enumerate()
 			.map(|(i, shape)| {
 				let color = colors.get_color(i).get_untracked();
-				view! { cx, <ExportTile shape color theme_data=&theme_data /> }
+				view! {  <ExportTile shape color theme_data=&theme_data /> }
 			})
-			.collect_view(cx)
+			.collect_view()
 	}
 }
 
 #[component]
-fn Grid(cx: Scope, tiling: Signal<Rc<Tiling>>, colors: Signal<GridColors>) -> impl IntoView {
+fn Grid(tiling: Signal<Rc<Tiling>>, colors: Signal<GridColors>) -> impl IntoView {
 	move || {
 		tiling
 			.with(|t| t.iter_tiles())
 			.enumerate()
 			.map(|(i, shape)| {
 				let color = colors.with(|c| c.get_color(i));
-				view! { cx, <Tile shape color /> }
+				view! {  <Tile shape color /> }
 			})
-			.collect_view(cx)
+			.collect_view()
 	}
 }
 
 #[component]
 pub fn Pattern(
-	cx: Scope,
 	id: &'static str,
 	#[prop(into)] tiling: Signal<Rc<Tiling>>,
 	#[prop(into)] colors: Signal<GridColors>,
@@ -133,21 +127,21 @@ pub fn Pattern(
 	};
 
 	let grid = if export {
-		view! { cx,
+		view! {
 			<ExportGrid
 				tiling=tiling.get_untracked()
 				colors=colors.get_untracked()
 			/>
 		}
 	} else {
-		view! { cx,
+		view! {
 			<Grid tiling colors />
 		}
 	};
 
 	let tilingId = format!("Pattern-{id}__Tiling");
 
-	view! { cx,
+	view! {
 		<svg class=class viewBox=view_box id=id>
 			<defs>
 				<pattern

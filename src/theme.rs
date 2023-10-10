@@ -1,7 +1,7 @@
 use leptos::{
 	component, create_effect, create_rw_signal, provide_context, Children, IntoView, RwSignal,
-	Scope
 };
+
 use web_sys::{window, CssStyleDeclaration};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -81,14 +81,14 @@ impl ThemeData {
 pub type ThemeCtx = RwSignal<Theme>;
 
 #[component]
-pub fn ThemeManager(cx: Scope, children: Children) -> impl IntoView {
-	let theme = create_rw_signal(cx, Theme::default());
-	create_effect(cx, move |_| {
+pub fn ThemeManager(children: Children) -> impl IntoView {
+	let theme = create_rw_signal(Theme::default());
+	create_effect(move |_| {
 		let root = leptos::document().document_element().unwrap();
 		root.set_attribute("data-theme", theme().name()).unwrap();
 	});
 
-	provide_context::<ThemeCtx>(cx, theme);
+	provide_context::<ThemeCtx>(theme);
 
-	children(cx)
+	children()
 }

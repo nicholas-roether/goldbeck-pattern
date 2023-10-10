@@ -6,13 +6,12 @@ use crate::{cls, components::pattern::TileColor, tiling::TilingFormat};
 
 #[component]
 fn BrushButton(
-	cx: Scope,
 	name: &'static str,
 	icon: &'static str,
 	color: TileColor,
 	brush: RwSignal<TileColor>
 ) -> impl IntoView {
-	view! { cx,
+	view! {
 		<button
 			role="radio"
 			aria-label=name
@@ -33,8 +32,8 @@ fn BrushButton(
 }
 
 #[component]
-fn BrushControls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
-	view! { cx,
+fn BrushControls(brush: RwSignal<TileColor>) -> impl IntoView {
+	view! {
 		<div role="radiogroup" aria-label="Werkzeug auswählen" class="flex border-2 border-misc h-12">
 			<BrushButton name="Pinsel 1" icon="brush" color=TileColor::Primary brush />
 			<BrushButton name="Pinsel 2" icon="brush" color=TileColor::Secondary brush />
@@ -44,8 +43,8 @@ fn BrushControls(cx: Scope, brush: RwSignal<TileColor>) -> impl IntoView {
 }
 
 #[component]
-fn ExportButton(cx: Scope, exporting: RwSignal<bool>) -> impl IntoView {
-	view! { cx,
+fn ExportButton(exporting: RwSignal<bool>) -> impl IntoView {
+	view! {
 		<button
 			class="inline-flex justify-center items-center h-12 sm:aspect-square font-semibold border-2 border-misc transition-all hover:shadow-lg"
 			on:click=move|_| exporting.set(true)
@@ -56,7 +55,7 @@ fn ExportButton(cx: Scope, exporting: RwSignal<bool>) -> impl IntoView {
 }
 
 #[component]
-fn FormatSelector(cx: Scope, format: RwSignal<TilingFormat>) -> impl IntoView {
+fn FormatSelector(format: RwSignal<TilingFormat>) -> impl IntoView {
 	let on_format_change = move |ev: Event| {
 		let value = event_target_value(&ev);
 		let value_u8: u8 = value.parse().unwrap();
@@ -65,7 +64,7 @@ fn FormatSelector(cx: Scope, format: RwSignal<TilingFormat>) -> impl IntoView {
 		}
 	};
 
-	view! { cx,
+	view! {
 		<select
 			class="h-12 p-2 bg-transparent border-2 border-misc"
 			aria-label="Format auswählen"
@@ -81,12 +80,11 @@ fn FormatSelector(cx: Scope, format: RwSignal<TilingFormat>) -> impl IntoView {
 
 #[component]
 pub fn Controls(
-	cx: Scope,
 	brush: RwSignal<TileColor>,
 	exporting: RwSignal<bool>,
 	format: RwSignal<TilingFormat>
 ) -> impl IntoView {
-	view! { cx,
+	view! {
 		<div class="p-3 sm:p-6 w-full max-w-sm flex justify-between gap-2 sm:gap-4 flex-col sm:flex-row">
 			<FormatSelector format />
 			<BrushControls brush />

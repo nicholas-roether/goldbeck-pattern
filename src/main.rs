@@ -19,5 +19,5 @@ mod utils;
 fn main() {
 	panic::set_hook(Box::new(console_error_panic_hook::hook));
 
-	mount_to_body(|cx| view! { cx, <ThemeManager><App /></ThemeManager>})
+	mount_to_body(|| view! { <ThemeManager><App /></ThemeManager>})
 }

@@ -8,12 +8,11 @@ use super::pattern::GridColors;
 
 #[component]
 pub fn ExportDialog(
-	cx: Scope,
 	open: RwSignal<bool>,
 	#[prop(into)] tiling: Signal<Rc<Tiling>>,
 	#[prop(into)] colors: Signal<GridColors>
 ) -> impl IntoView {
-	let (reps, set_reps) = create_signal(cx, 3);
+	let (reps, set_reps) = create_signal(3);
 
 	let on_reps_change = move |ev: Event| {
 		let value = event_target_value(&ev);
@@ -25,8 +24,8 @@ pub fn ExportDialog(
 		open.set(false);
 	};
 
-	view! { cx,
-		<Show when=open fallback=|_| () >
+	view! {
+		<Show when=open>
 			<div class="z-40 w-screen h-screen absolute inset-0 bg-background/70 flex items-center justify-center overflow-hidden">
 				<section class="flex-1 max-w-2xl p-4 m-4 bg-primary text-primaryText shadow-xl">
 					<div class="flex mb-4">

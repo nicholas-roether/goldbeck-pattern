@@ -1,16 +1,42 @@
-use std::iter;
+use std::{error::Error, fmt, iter};
 
-use js_sys::{Array, JsString};
-use leptos::{document, leptos_dom::logging::console_error};
+use enum_iterator::Sequence;
+use js_sys::{Array, JsString, Uint8Array};
+use leptos::{
+	document,
+	leptos_dom::logging::{console_error, console_log}
+};
 use wasm_bindgen::{JsCast, JsValue};
-use web_sys::{window, Blob, BlobPropertyBag, HtmlAnchorElement, SvgElement, Url, XmlSerializer};
+use web_sys::{window, Blob, HtmlAnchorElement, SvgElement, Url, XmlSerializer};
 
-fn create_svg_file(content: String) -> Result<String, JsValue> {
-	let js_str = JsValue::from_str(&content);
-	let js_str_array = Array::from_iter(iter::once(js_str));
-	let mut blob_properties = BlobPropertyBag::new();
-	blob_properties.type_("image/svg+xml");
-	let blob = Blob::new_with_str_sequence_and_options(&js_str_array, &blob_properties)?;
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Sequence)]
+#[repr(u8)]
+pub enum OutputFormat {
+	Svg,
+	Ai,
+	Pdf
+}
+
+impl OutputFormat {
+	pub fn extension(&self) -> &'static str {
+		match self {
+			Self::Svg => "svg",
+			Self::Pdf => "pdf",
+			Self::Ai => "ai"
+		}
+	}
+}
+
+impl fmt::Display for OutputFormat {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(f, ".{}", self.extension())
+	}
+}
+
+fn create_url(content: Vec<u8>) -> Result<String, JsValue> {
+	let js_bytes = unsafe { Uint8Array::view(&content) };
+	let js_bytes_array = Array::from_iter(iter::once(js_bytes));
+	let blob = Blob::new_with_u8_array_sequence(&js_bytes_array)?;
 	Url::create_object_url_with_blob(&blob)
 }
 
@@ -79,23 +105,42 @@ fn get_svg_elem(selector: &str) -> Option<SvgElement> {
 	Some(elem.dyn_into().unwrap())
 }
 
-fn get_download_url(selector: &str) -> Option<String> {
+fn convert_from_svg(svg_content: String, format: OutputFormat) -> Result<Vec<u8>, Box<dyn Error>> {
+	match format {
+		OutputFormat::Svg => Ok(svg_content.bytes().collect()),
+		OutputFormat::Pdf | OutputFormat::Ai => Ok(svg2pdf::convert_str(
+			&svg_content,
+			svg2pdf::Options::default()
+		)?)
+	}
+}
+
+fn get_download_url(selector: &str, format: OutputFormat) -> Result<String, ()> {
 	let Some(svg_elem) = get_svg_elem(selector) else {
 		console_error("Cannot export SVG; element not found!");
-		return None;
+		return Err(());
 	};
-	let content = match render_svg(svg_elem) {
+	let svg_content = match render_svg(svg_elem) {
 		Ok(content) => content,
 		Err(err) => {
 			console_error(&format!(
 				"Failed to render svg: {}",
 				err.dyn_into::<JsString>().unwrap()
 			));
-			return None;
+			return Err(());
 		}
 	};
-	let url = create_svg_file(content).expect("Failed to create SVG file blob");
-	Some(url)
+
+	let output_content = match convert_from_svg(svg_content, format) {
+		Ok(output_content) => output_content,
+		Err(err) => {
+			console_error(&format!("Failed to convert to {format}: {err}"));
+			return Err(());
+		}
+	};
+
+	let url = create_url(output_content).expect("Failed to create SVG file blob");
+	Ok(url)
 }
 
 fn download_file(url: &str, filename: &str) {
@@ -117,10 +162,16 @@ fn download_file(url: &str, filename: &str) {
 	a.remove();
 }
 
-pub fn export_svg(selector: &str, filename: &str) {
-	let Some(download_url) = get_download_url(selector) else {
+pub fn export_pattern(selector: &str, filename: &str, format: OutputFormat) {
+	let Ok(download_url) = get_download_url(selector, format) else {
 		console_error("SVG File creation failed");
 		return;
 	};
-	download_file(&download_url, filename);
+
+	let complete_filename = format!("{filename}.{}", format.extension());
+
+	console_log(&complete_filename);
+
+	download_file(&download_url, &complete_filename);
 }
+

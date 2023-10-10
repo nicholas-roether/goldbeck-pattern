@@ -47,13 +47,7 @@ fn ExportTile<'a>(shape: Shape, color: TileColor, theme_data: &'a ThemeData) -> 
 		TileColor::None => theme_data.background.clone()
 	};
 	view! {
-		<polygon
-			points=shape.svg_path()
-			fill=fill.clone()
-			stroke=fill
-			stroke-width="2"
-			vector-effect="non-scaling-stroke"
-		/>
+		<polygon points=shape.svg_path() fill=fill.clone() stroke=fill stroke-width="0.01"></polygon>
 	}
 }
 
@@ -61,17 +55,18 @@ fn ExportTile<'a>(shape: Shape, color: TileColor, theme_data: &'a ThemeData) -> 
 fn Tile(shape: Shape, #[prop(into)] color: Signal<TileColor>) -> impl IntoView {
 	view! {
 		<polygon
-			class=move || cls! {
-				match color() {
-					TileColor::Primary => "fill-primary stroke-primary",
-					TileColor::Secondary => "fill-secondary stroke-secondary",
-					TileColor::None => "fill-transparent stroke-transparent"
+			class=move || {
+				cls! {
+					match color() { TileColor::Primary => "fill-primary stroke-primary",
+					TileColor::Secondary => "fill-secondary stroke-secondary", TileColor::None =>
+					"fill-transparent stroke-transparent" }
 				}
 			}
+
 			points=shape.svg_path()
 			stroke-width="2"
 			vector-effect="non-scaling-stroke"
-		/>
+		></polygon>
 	}
 }
 
@@ -84,7 +79,7 @@ fn ExportGrid(tiling: Rc<Tiling>, colors: GridColors) -> impl IntoView {
 			.enumerate()
 			.map(|(i, shape)| {
 				let color = colors.get_color(i).get_untracked();
-				view! {  <ExportTile shape color theme_data=&theme_data /> }
+				view! { <ExportTile shape color theme_data=&theme_data/> }
 			})
 			.collect_view()
 	}
@@ -98,7 +93,7 @@ fn Grid(tiling: Signal<Rc<Tiling>>, colors: Signal<GridColors>) -> impl IntoView
 			.enumerate()
 			.map(|(i, shape)| {
 				let color = colors.with(|c| c.get_color(i));
-				view! {  <Tile shape color /> }
+				view! { <Tile shape color/> }
 			})
 			.collect_view()
 	}
@@ -127,16 +122,9 @@ pub fn Pattern(
 	};
 
 	let grid = if export {
-		view! {
-			<ExportGrid
-				tiling=tiling.get_untracked()
-				colors=colors.get_untracked()
-			/>
-		}
+		view! { <ExportGrid tiling=tiling.get_untracked() colors=colors.get_untracked()/> }
 	} else {
-		view! {
-			<Grid tiling colors />
-		}
+		view! { <Grid tiling colors/> }
 	};
 
 	let tilingId = format!("Pattern-{id}__Tiling");
@@ -156,7 +144,9 @@ pub fn Pattern(
 					{grid}
 				</pattern>
 			</defs>
-			<rect fill=format!("url(#{tilingId})") width=width height=height />
+			<rect fill=format!("url(#{tilingId})") width=width height=height></rect>
 		</svg>
 	}
 }
+
+
